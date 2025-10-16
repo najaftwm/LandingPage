@@ -1,11 +1,10 @@
 import React from 'react'
-import { HeroSection, Navbar,Companies,Courses, Achievement,Categories,FeedBack,CTA,Footer } from './components'
+import { HeroSection, Companies,Courses, Achievement,Categories,FeedBack,CTA,FAQ } from './components'
 
 function App() {
 
   return (
     <div className="app">
-        <Navbar/>
         <HeroSection/>
         <Companies/>
         <Courses/>
@@ -13,7 +12,7 @@ function App() {
         <Categories/>
         <FeedBack/>
         <CTA/>
-        <Footer/>
+        <FAQ/>
     </div>
   )
 }

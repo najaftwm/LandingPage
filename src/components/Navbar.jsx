@@ -1,5 +1,5 @@
 import React,{useState} from 'react'
-import Logo from '../assets/logo.svg'
+import Logo from '../assets/logo.png'
 import lock from '../assets/lock.svg'
 import Hamburger from '../assets/hamburgerMenu.svg'
 import Close from '../assets/close.svg'
