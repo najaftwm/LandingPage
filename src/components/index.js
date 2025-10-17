@@ -7,7 +7,8 @@ import FeedBack from "./FeedBack";
 import HowItWorks from "./HowItWorks";
 import FAQ from "./FAQ";
 import MoveToTop from "./MoveToTop"
+import WhyWeStandOut from "./WhyWeStandOut";
 
 
-export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices }
+export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut }
 

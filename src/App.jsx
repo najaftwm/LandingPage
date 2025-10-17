@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { HeroSection, Courses, Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices } from './components'
+import { HeroSection, Courses, Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut } from './components'
 
 
 function App() {
@@ -13,6 +13,7 @@ function App() {
         <Categories/>
         <FeedBack/>
         <HowItWorks/>
+        <WhyWeStandOut/>
         <FAQ/>
         <MoveToTop/>
     </div>
