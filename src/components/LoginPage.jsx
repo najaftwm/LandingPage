@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion"; // eslint-disable-line
+import FormBg from '../assets/formbg.jpg';
 
 const LoginPage = ({ embedded = false }) => {
   const [formData, setFormData] = useState({
@@ -214,10 +215,19 @@ const LoginPage = ({ embedded = false }) => {
   if (embedded) {
     return (
       <div className="w-full">
-        <div className="w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300">
-          <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-[#4a4a2e] tracking-wide drop-shadow-sm">
-            Register
-          </h2>
+        <div className="w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300 relative overflow-hidden">
+          {/* Form Background Image */}
+          <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl">
+            <img 
+              src={FormBg} 
+              alt='Form Background' 
+              className='w-full h-full object-cover opacity-30'
+            />
+          </div>
+          <div className="relative z-10">
+            <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-[#4a4a2e] tracking-wide drop-shadow-sm">
+              Register
+            </h2>
 
           {submitError && (
             <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
@@ -394,6 +404,7 @@ const LoginPage = ({ embedded = false }) => {
               )}
             </>
           )}
+          </div>
         </div>
       </div>
     );
@@ -412,10 +423,19 @@ const LoginPage = ({ embedded = false }) => {
       />
 
       {/* RIGHT SECTION */}
-      <div className="md:w-1/2 w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300">
-        <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-black tracking-wide drop-shadow-sm">
-          Register
-        </h2>
+      <div className="md:w-1/2 w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300 relative overflow-hidden">
+        {/* Form Background Image */}
+        <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl">
+          <img 
+            src={FormBg} 
+            alt='Form Background' 
+            className='w-full h-full object-cover '
+          />
+        </div>
+        <div className="relative z-10">
+          <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-black tracking-wide drop-shadow-sm">
+            Register
+          </h2>
         
         {submitError && (
           <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
@@ -606,6 +626,7 @@ const LoginPage = ({ embedded = false }) => {
             )}
           </>
         )}
+        </div>
       </div>
     </div>
   );

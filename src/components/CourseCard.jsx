@@ -1,19 +1,29 @@
 import React from 'react'
 import Rating from './Rating'
-import blog1 from '../assets/blog-1.png'
 
-
-const CourseCard = ({title,category,rating,price,linkImg}) => {
+const CourseCard = ({ title, category, rating, price, linkImg }) => {
   return (
-    <div className='bg-white drop-shadow-md overflow-hidden my-4 mr-2'>
-      <img src={linkImg} alt="courses" className='h-40 w-full object-cover'/>
-      <div className='p-5'>
-          <h1 className='py-2 truncate'>{title}</h1>
-          <Rating rating={rating}/>
-      </div>
-      <h3 className='p-5 text-xl bottom-0'>{price}</h3>
-      <div className='absolute top-0 bg-white m-3 px-2 py-[2.5px] rounded font-bold'>
+    <div className='bg-white shadow-lg rounded-lg overflow-hidden mx-2 mb-4'>
+      <div className='relative'>
+        <img src={linkImg} alt={title} className='w-full h-48 object-cover' />
+        <div className='absolute top-2 right-2 bg-white px-2 py-1 rounded text-sm font-semibold text-[#20B486]'>
           {category}
+        </div>
+      </div>
+      <div className='p-4'>
+        <h3 className='text-lg font-semibold text-gray-800 mb-2 line-clamp-2'>
+          {title}
+        </h3>
+        <div className='flex items-center justify-between mb-3'>
+          <Rating rating={rating} />
+          <span className='text-sm text-gray-600'>({rating})</span>
+        </div>
+        <div className='flex items-center justify-between'>
+          <span className='text-2xl font-bold text-[#20B486]'>${price}</span>
+          <button className='bg-[#20B486] text-white px-4 py-2 rounded hover:bg-[#1a8f6b] transition-colors'>
+            Enroll Now
+          </button>
+        </div>
       </div>
     </div>
   )

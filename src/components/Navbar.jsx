@@ -1,8 +1,6 @@
 import React,{useState} from 'react'
 import Logo from '../assets/logo.png'
-import lock from '../assets/lock.svg'
 import Hamburger from '../assets/hamburgerMenu.svg'
-import Close from '../assets/close.svg'
 import { motion } from 'framer-motion'
 
 const Navbar = () => {
@@ -27,13 +25,13 @@ const Navbar = () => {
             </div>
             <div className='md:flex hidden'>
                 <button className='flex justify-content-between items-center bg-transparent px-6 gap-2'>
-                    <img src={lock} alt='lock'/>
+                    <span className='text-gray-600'>🔒</span>
                     Login
                 </button>
                 <button className='px-8 py-3 bg-[#208446]'>Sign up for free</button>
             </div>
             <motion.div whileTap={{ scale:0.6 }} className="md:hidden cursor-pointer" onClick={handleToggle}>
-                <img src={toggle ? Close : Hamburger} alt="hamburger" />
+                <img src={Hamburger} alt="hamburger" />
             </motion.div>
         </div>
         <div>
@@ -49,7 +47,7 @@ const Navbar = () => {
                 <li className='p-4 hover:bg-gray-50'>Pricing</li> 
                 <div className='flex flex-col my-4 gap-4'>
                     <button className='flex border border-[240136] justify-center items-center bg-transparent px-6 gap-2 py-4'>
-                        <img src={lock} alt='lock'/>
+                        <span className='text-gray-600'>🔒</span>
                         Login
                     </button>
                     <button className='px-8 py-5 bg-[#208446]'>Sign up for free</button>
