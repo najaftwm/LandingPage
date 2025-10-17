@@ -1,93 +1,85 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { LineChart, SignalHigh, Headset, Award } from 'lucide-react'
 
-const leftCardVariants = {
-  hidden: { opacity: 0, x: -60 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+const leftColVariants = {
+  hidden: { opacity: 0, x: -40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.5, ease: 'easeOut' } },
 }
 
-const rightCardVariants = {
-  hidden: { opacity: 0, x: 60 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.6, ease: 'easeOut' } },
+const rightItemVariants = {
+  hidden: { opacity: 0, x: 40 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.45, ease: 'easeOut' } },
 }
 
-const imageVariants = {
-  hidden: { opacity: 0, y: 60 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: 'easeOut' } },
+// Icon URLs (SVG) served as <img> like your reference
+const ICONS = {
+  signal: 'https://cdn.jsdelivr.net/npm/lucide-static@0.452.0/icons/signal.svg',
+  // Some CDNs rename or block certain files; use a more reliable mirror for the chart icon
+  chart: 'https://unpkg.com/lucide-static@0.452.0/icons/line-chart.svg',
+  headset: 'https://cdn.jsdelivr.net/npm/lucide-static@0.452.0/icons/headset.svg',
+  award: 'https://cdn.jsdelivr.net/npm/lucide-static@0.452.0/icons/award.svg',
 }
 
 const WhyWeStandOut = () => {
+  // Existing content preserved – only the layout/visuals are changed
   const points = [
-    { text: 'Actionable Research Alerts – Clear buy/sell/hold signals', side: 'left', icon: SignalHigh },
-    { text: 'Data-Driven Insights – Backed by in-depth analysis', side: 'left', icon: LineChart },
-    { text: '24/7 Support – Guidance at every step', side: 'right', icon: Headset },
-    { text: 'Proven Track Record – Consistent results across India', side: 'right', icon: Award },
+    { text: 'Actionable Research Alerts – Clear buy/sell/hold signals', img: ICONS.signal, alt: 'Signal icon' },
+    { text: 'Data-Driven Insights – Backed by in-depth analysis', img: ICONS.chart, alt: 'Chart icon' },
+    { text: '24/7 Support – Guidance at every step', img: ICONS.headset, alt: 'Headset icon' },
+    { text: 'Proven Track Record – Consistent results across India', img: ICONS.award, alt: 'Award icon' },
   ]
 
   return (
-    <section className='w-full bg-white py-16 px-4'>
-      <div className='max-w-6xl mx-auto'>
-        <h2 className='text-center text-4xl md:text-4xl font-extrabold mb-10'>
-          <span className='text-gray-900'>Why</span> <span className='text-[#20B486]'>We Stand Out</span>
-        </h2>
+    <section className='w-full bg-white py-14 md:py-19 px-4'>
+      <div className='max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-stretch'>
+        {/* Left: badge + headline */}
+        <motion.div
+          initial='hidden'
+          whileInView='visible'
+          viewport={{ amount: 0.3, once: true }}
+          variants={leftColVariants}
+          className='order-1 flex flex-col justify-center h-full'
+        >
+        
+          <h2 className='text-5xl md:text-6xl font-extrabold leading-tight text-gray-900'>
+            Why <span className='text-[#20B486]'>We Stand Out</span>
+          </h2>
+          <p className='mt-6 text-lg md:text-xl text-gray-600 max-w-2xl'>
+            We combine research-driven insights with dedicated support to help you make confident decisions.
+          </p>
+        </motion.div>
 
-        <div className='grid grid-cols-1 md:grid-cols-3 items-center gap-8'>
-          {/* Left column cards */}
-          <div className='flex flex-col gap-6 order-2 md:order-1'>
-            {points
-              .filter(p => p.side === 'left')
-              .map((p, idx) => (
-                <motion.div
-                  key={p.text}
-                  initial='hidden'
-                  whileInView='visible'
-                  viewport={{ amount: 0.3 }}
-                  variants={leftCardVariants}
-                  transition={{ delay: idx * 0.1 }}
-                  className='bg-[#f8f8f4] border border-gray-200 rounded-2xl p-8 shadow-md min-h-[132px] flex items-start gap-4'
-                >
-                  <div className='p-3 rounded-xl bg-gradient-to-br from-[#27b018]/10 to-[#20B486]/10 text-[#20B486] flex items-center justify-center'>
-                    <p.icon className='w-6 h-6' />
-                  </div>
-                  <p className='text-base md:text-lg text-gray-800'>{p.text}</p>
-                </motion.div>
-              ))}
-          </div>
-
-          {/* Center image */}
-          <motion.div
-            initial='hidden'
-            whileInView='visible'
-            viewport={{ amount: 0.3 }}
-            variants={imageVariants}
-            className='order-1 md:order-2 flex justify-center'
-          >
-            {/* Center image – served from public/ */}
-            <img src='/man.webp' alt='Investor' className='w-64 h-64 md:w-96 md:h-96 object-contain drop-shadow-lg' />
-          </motion.div>
-
-          {/* Right column cards */}
-          <div className='flex flex-col gap-6 order-3'>
-            {points
-              .filter(p => p.side === 'right')
-              .map((p, idx) => (
-                <motion.div
-                  key={p.text}
-                  initial='hidden'
-                  whileInView='visible'
-                  viewport={{ amount: 0.3 }}
-                  variants={rightCardVariants}
-                  transition={{ delay: idx * 0.1 }}
-                  className='bg-[#f8f8f4] border border-gray-200 rounded-2xl p-8 shadow-md min-h-[132px] flex items-start gap-4'
-                >
-                  <div className='p-3 rounded-xl bg-gradient-to-br from-[#27b018]/10 to-[#20B486]/10 text-[#20B486] flex items-center justify-center'>
-                    <p.icon className='w-6 h-6' />
-                  </div>
-                  <p className='text-base md:text-lg text-gray-800'>{p.text}</p>
-                </motion.div>
-              ))}
-          </div>
+        {/* Right: feature grid (icon + text, no cards) */}
+        <div className='order-2 grid grid-cols-1 sm:grid-cols-2 gap-12'>
+          {points.map((p, idx) => (
+            <motion.div
+              key={p.text}
+              initial='hidden'
+              whileInView='visible'
+              viewport={{ amount: 0.3, once: true }}
+              variants={rightItemVariants}
+              transition={{ delay: idx * 0.08 }}
+              className='bg-transparent p-0 flex flex-col items-center text-center gap-4'
+            >
+              <div className='shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-full bg-gradient-to-br from-[#27b018]/10 to-[#20B486]/10 text-[#20B486] flex items-center justify-center'>
+                <img
+                  src={p.img}
+                  alt={p.alt}
+                  className='w-10 h-10 md:w-14 md:h-14 object-contain opacity-90'
+                  onError={(e) => {
+                    // Fallback icon if the primary URL fails (no axes chart)
+                    e.currentTarget.onerror = null
+                    e.currentTarget.src = 'https://unpkg.com/lucide-static@0.452.0/icons/chart-no-axes-gantt.svg'
+                  }}
+                />
+              </div>
+              <div className='flex-1'>
+                <p className='text-sm md:text-base text-gray-800 leading-relaxed'>
+                  {p.text}
+                </p>
+              </div>
+            </motion.div>
+          ))}
         </div>
       </div>
     </section>
