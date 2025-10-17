@@ -1,5 +1,5 @@
 import React from 'react'
-import { HeroSection, Companies,Courses, Achievement,Categories,FeedBack,HowItWorks,FAQ } from './components'
+import { HeroSection, Companies,Courses, Achievement,Categories,FeedBack,HowItWorks,FAQ,MoveToTop } from './components'
 
 function App() {
 
@@ -13,6 +13,7 @@ function App() {
         <FeedBack/>
         <HowItWorks/>
         <FAQ/>
+        <MoveToTop/>
     </div>
   )
 }

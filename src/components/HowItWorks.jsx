@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 
 import step1Img from "../assets/step1.jpg";
-import step2Img from "../assets/step2.jpg";
-import step3Img from "../assets/step3.jpg";
-import step4Img from "../assets/step4.jpg";
+import step2Img from "../assets/step1.jpg";
+import step3Img from "../assets/step1.jpg";
+import step4Img from "../assets/step1.jpg";
 
 const HowItWorks = () => {
   const steps = [

@@ -7,5 +7,6 @@ import Categories from "./WhyChooseUs";
 import FeedBack from "./FeedBack";
 import HowItWorks from "./HowItWorks";
 import FAQ from "./FAQ";
+import MoveToTop from "./MoveToTop"
 
-export { Navbar,HeroSection,Companies,Courses,Achievement,Categories,FeedBack,HowItWorks,FAQ }
+export { Navbar,HeroSection,Companies,Courses,Achievement,Categories,FeedBack,HowItWorks,FAQ,MoveToTop }
