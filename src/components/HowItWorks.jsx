@@ -48,13 +48,13 @@ const HowItWorks = () => {
     <section className="w-full bg-[#043344] text-white py-24 px-6">
       <div className="max-w-[1150px] mx-auto">
         {/* Top Progress Steps */}
-        <div className="relative flex justify-between items-center mb-20 gap-8">
+        <div className="relative flex justify-between items-start mb-20 gap-2 md:gap-8">
           {steps.map((step, index) => (
             <div key={step.id} className="flex-1 flex flex-col items-center relative min-w-0">
               {/* Connector line between steps */}
               {index < steps.length - 1 && (
                 <div
-                  className={`absolute top-[18px] left-[60%] w-[80%] h-[2px] ${
+                  className={`absolute top-[10px] left-[60%] w-[80%] h-[1px] md:h-[2px] ${
                     index + 1 < active ? "bg-white" : "bg-gray-500/40"
                   }`}
                 />
@@ -63,7 +63,7 @@ const HowItWorks = () => {
               {/* Step Number */}
               <button
                 onClick={() => setActive(step.id)}
-                className={`text-2xl font-semibold ${
+                className={`text-base md:text-2xl font-semibold leading-none ${
                   step.id === active ? "text-white" : "text-gray-400"
                 }`}
               >
@@ -72,7 +72,7 @@ const HowItWorks = () => {
 
               {/* Step Title */}
               <p
-                className={`text-sm mt-1 text-center ${
+                className={`text-[10px] md:text-sm mt-1.5 text-center leading-tight ${
                   step.id === active ? "font-bold text-white" : "text-gray-400"
                 }`}
               >
