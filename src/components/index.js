@@ -8,10 +8,11 @@ import HowItWorks from "./HowItWorks";
 import FAQ from "./FAQ";
 import MoveToTop from "./MoveToTop"
 import Footer from "./Footer"
+import LoginPage from "./LoginPage";
 
 import WhyWeStandOut from "./WhyWeStandOut";
 
 
-export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer }
+export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer,LoginPage }
 
 
