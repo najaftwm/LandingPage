@@ -7,7 +7,7 @@ const HeroSection = () => {
   return (
     <section className="w-full bg-white relative">
       {/* Logo */}
-      <div className="absolute top-4 left-4 md:top-8 md:left-12 z-10">
+      <div className="absolute top-4 left-3 md:top-0 md:left-8 z-10">
         <img src={Logo} alt="logo" className="h-12 md:h-48" />
       </div>
 
@@ -23,16 +23,16 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-[90%] md:max-w-[97%] mx-auto grid md:grid-cols-2 gap-6 md:gap-12 py-24 md:py-40">
+      <div className="relative z-10 max-w-[90%] md:max-w-[97%] mx-auto grid md:grid-cols-2 gap-6 md:gap-12 pt-24 pb-24 md:pt-12 md:pb-40">
         {/* Left Section */}
-        <div className="flex flex-col justify-start gap-4 md:gap-6">
+        <div className="flex flex-col justify-start gap-4 md:gap-6 md:mt-24">
           <h2
-            className="text-3xl md:text-6xl font-extrabold text-[#27b018] leading-snug md:leading-[4.5rem]"
+            className="text-3xl md:text-6xl font-extrabold text-[#27b018] leading-snug md:leading-[4.5rem] mb-4"
           >
-            <span className="block">Unlock Smart Investment</span>
+            <span className="block md:whitespace-nowrap ">Unlock Smart Investment</span>
             <span className="block">Decisions with Royalty Research Alerts</span>
           </h2>
-          <h3 className="text-md md:text-2xl font-bold text-white">
+          <h3 className="text-md md:text-2xl font-bold text-white mb-5">
             Expert Stock Market Services for Traders like You
           </h3>
           <p className="text-sm md:text-base text-white">
@@ -44,7 +44,7 @@ const HeroSection = () => {
         </div>
 
         {/* Right Section (Login Form) */}
-        <div className="w-full mt-8 md:mt-0">
+        <div className="w-full mt-8 md:mt-7 md:max-w-xl md:ml-auto">
           <LoginPage embedded={true} />
         </div>
       </div>

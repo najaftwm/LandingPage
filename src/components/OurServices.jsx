@@ -246,7 +246,7 @@ const OurServices = () => {
             whileHover={{ y: -5, scale: 1.02 }}
             className="bg-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition duration-300 relative"
           >
-            <h3 className="text-xl font-semibold text-blue-700 mb-2">
+            <h3 className="text-xl font-semibold text-[#20B486] mb-2">
               {service.title}
             </h3>
             <p className="text-gray-600 text-sm mb-4">{service.desc}</p>
@@ -255,7 +255,7 @@ const OurServices = () => {
                 onClick={() => setExpandedCard(i)}
                 className="flex items-center text-blue-600 text-sm font-medium hover:text-blue-800 transition-colors"
               >
-                <span className="mr-1">View more</span>
+                <span className="mr-1 text-[#20B486]">View more</span>
                 <MoveDownRight className="w-4 h-4 mt-0.5" />
               </button>
           </div>

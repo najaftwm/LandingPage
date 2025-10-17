@@ -44,10 +44,10 @@ const FeedBack = () => {
       <div className='max-w-[1200px] mx-auto text-center'>
         {/* Heading */}
         <h2 className='text-4xl md:text-5xl font-bold text-gray-900'>
-          What Our <span className='text-[#20B486]'>Students Say</span>
+          What Our <span className='text-[#20B486]'>Users Say</span>
         </h2>
         <p className='text-gray-500 text-base md:text-lg mt-4'>
-          Real feedback from our students who have transformed their learning journey with us.
+          Real feedback from our Users who have transformed their trading journey with us.
         </p>
 
         {/* Slider */}
