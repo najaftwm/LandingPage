@@ -9,5 +9,5 @@ import FAQ from "./FAQ";
 import MoveToTop from "./MoveToTop"
 
 
-export { Navbar,HeroSection,Companies,Courses,Achievement,Categories,FeedBack,HowItWorks,FAQ,MoveToTop }
+export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices }
 
