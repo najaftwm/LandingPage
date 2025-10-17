@@ -1,5 +1,5 @@
 import React from "react";
-
+import Logo from '../assets/logo.png'
 const Footer = () => {
   return (
     <footer className="w-full bg-[#0a1f2e] text-white py-12 px-6">
@@ -9,9 +9,9 @@ const Footer = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <img
-              src="/logo.png"
+              src={Logo}
               alt="Company Logo"
-              className="h-12"
+              className="h-[102px]"
             />
           </div>
 
@@ -26,7 +26,7 @@ const Footer = () => {
                 <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
                 </svg>
-                +91 7228034343
+                +91 00000
               </a>
               <a
                 href="mailto:getpayroll@petpooja.com"
@@ -36,7 +36,7 @@ const Footer = () => {
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
-                getpayroll@petpooja.com
+                gmail@gmail.com
               </a>
             </div>
           </div>
@@ -47,7 +47,7 @@ const Footer = () => {
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
             <p className="text-gray-300">
-              3rd Floor, Tower-A, Gopal Palace, Nehrunagar, Ambawadi, Ahmedabad, Gujarat - 380015
+              {/* Address */}
             </p>
           </div>
         </div>
@@ -106,7 +106,7 @@ const Footer = () => {
         {/* Bottom Links */}
         <div className="text-center text-xs text-gray-400">
           <p>
-            © 2025 All rights Reserved by Prayosha Food Services Pvt. Ltd. •{" "}
+            © 2025 All rights Reserved by Royalty Research Alert. •{" "}
             <a href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</a> •{" "}
             <a href="/compliance" className="hover:text-gray-300 transition-colors">Compliance</a> •{" "}
             <a href="/terms" className="hover:text-gray-300 transition-colors">Terms</a> •{" "}
