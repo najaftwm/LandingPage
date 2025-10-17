@@ -14,7 +14,7 @@ const OurServices = () => {
         viewport={{ amount: 0.3 }}
         className="text-4xl font-bold mb-4"
       >
-        <span>Our Core Services</span>
+        <span className='text-4xl'>Our Core Services</span>
       </motion.h2>
       <motion.p 
         initial={{ opacity: 0, y: 30 }}

@@ -9,6 +9,9 @@ import FAQ from "./FAQ";
 import MoveToTop from "./MoveToTop"
 import Footer from "./Footer"
 
+import WhyWeStandOut from "./WhyWeStandOut";
 
-export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,Footer }
+
+export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer }
+
 

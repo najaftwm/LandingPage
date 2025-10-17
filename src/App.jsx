@@ -1,6 +1,8 @@
 import React from 'react'
 
-import { HeroSection, Courses, Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,Footer } from './components'
+
+import { HeroSection, Courses, Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer } from './components'
+
 
 
 function App() {
@@ -13,6 +15,7 @@ function App() {
         <Categories/>
         <FeedBack/>
         <HowItWorks/>
+        <WhyWeStandOut/>
         <FAQ/>
         <Footer/>
         <MoveToTop/>
