@@ -7,9 +7,9 @@ const HeroSection = () => {
   return (
     <section className="w-full bg-white relative">
       {/* Logo */}
-      <div className="absolute top-4 left-3 md:top-0 md:left-8 z-10">
+      {/* <div className="absolute top-4 left-3 md:top-0 md:left-8 z-10">
         <img src={Logo} alt="logo" className="h-12 md:h-48" />
-      </div>
+      </div> */}
 
       {/* Hero Image */}
       <div className="absolute inset-0 w-full h-full overflow-hidden">
@@ -29,7 +29,7 @@ const HeroSection = () => {
           <h2
             className="text-3xl md:text-6xl font-extrabold text-[#27b018] leading-snug md:leading-[4.5rem] mb-4"
           >
-            <span className="block md:whitespace-nowrap ">Unlock Smart Investment</span>
+            <span className="block md:whitespace-nowrap ">Unlock Smart Trading</span>
             <span className="block">Decisions with Royalty Research Alerts</span>
           </h2>
           <h3 className="text-md md:text-2xl font-bold text-white mb-5">

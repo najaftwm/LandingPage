@@ -19,13 +19,13 @@ const WhyChooseUs = () => {
       icon: <FaChartLine size={24} />,
       title: "Comprehensive Services",
       description:
-        "From portfolio management to derivatives, we provide complete trading and investment solutions under one roof.",
+        "From portfolio management to derivatives, we provide complete trading solutions under one roof.",
     },
     {
       icon: <FaLightbulb size={24} />,
       title: "Tailored Strategies",
       description:
-        "Every investor is unique — our research is personalized to align with your financial goals and risk appetite.",
+        "Every trader is unique — our research is personalized to align with your financial goals and risk appetite.",
     },
     {
       icon: <FaRegClock size={24} />,
@@ -49,7 +49,7 @@ const WhyChooseUs = () => {
           Why <span className="text-[#20B486]">Choose Us</span>
         </h2>
         <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-16">
-          Building trust through expertise, insight, and transparency — here’s why traders and investors choose us.
+          Building trust through expertise, insight, and transparency — here’s why traders choose us.
         </p>
 
         {/* Benefits Grid */}

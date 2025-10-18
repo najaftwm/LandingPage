@@ -23,7 +23,7 @@ const OurServices = () => {
         viewport={{ amount: 0.3 }}
         className="text-gray-600 mb-12"
       >
-        Explore our range of expert trading and investment solutions designed to grow your wealth.
+       Explore our range of expert trading solutions designed to help you grow your wealth.
       </motion.p>
   
       <div className="relative">
@@ -40,8 +40,8 @@ const OurServices = () => {
                 {[
                   {
                     title: "Portfolio Management",
-                    desc: "Professional management of your investments to balance risk and maximize returns.",
-                    detailedInfo: "Building and maintaining a winning portfolio requires more than just picking stocks—it's about balance, diversification, and timely adjustments. Our Portfolio Management service takes the guesswork out of investing. We analyze your risk tolerance, financial objectives, and market trends to create a customized portfolio that grows with you.\n\nPersonalized Strategies: Tailored asset allocation based on your goals, whether it's aggressive growth or steady income.\nOngoing Monitoring: Regular reviews and rebalancing to adapt to market shifts.\nPerformance Tracking: Detailed reports and analytics to keep you informed every step of the way.\n\n"
+                    desc: "Professional management of your trades to balance risk and maximize returns.",
+                    detailedInfo: "Building and maintaining a winning portfolio requires more than just picking stocks—it's about balance, diversification, and timely adjustments. Our Portfolio Management service takes the guesswork out of trading. We analyze your risk tolerance, financial objectives, and market trends to create a customized portfolio that grows with you.\n\nPersonalized Strategies: Tailored asset allocation based on your goals, whether it's aggressive growth or steady income.\nOngoing Monitoring: Regular reviews and rebalancing to adapt to market shifts.\nPerformance Tracking: Detailed reports and analytics to keep you informed every step of the way.\n\n"
                   },
                   {
                     title: "Demat Account Services",
@@ -80,8 +80,8 @@ const OurServices = () => {
                   const services = [
                     {
                       title: "Portfolio Management",
-                      desc: "Professional management of your investments to balance risk and maximize returns.",
-                      detailedInfo: "Building and maintaining a winning portfolio requires more than just picking stocks—it's about balance, diversification, and timely adjustments. Our Portfolio Management service takes the guesswork out of investing. We analyze your risk tolerance, financial objectives, and market trends to create a customized portfolio that grows with you.\n\nPersonalized Strategies: Tailored asset allocation based on your goals, whether it's aggressive growth or steady income.\nOngoing Monitoring: Regular reviews and rebalancing to adapt to market shifts.\nPerformance Tracking: Detailed reports and analytics to keep you informed every step of the way.\n\nWith Royalty Research Alerts, your investments work smarter, not harder, ensuring optimal returns while minimizing risks."
+                      desc: "Professional management of your trades to balance risk and maximize returns.",
+                      detailedInfo: "Building and maintaining a winning portfolio requires more than just picking stocks—it's about balance, diversification, and timely adjustments. Our Portfolio Management service takes the guesswork out of trading. We analyze your risk tolerance, financial objectives, and market trends to create a customized portfolio that grows with you.\n\nPersonalized Strategies: Tailored asset allocation based on your goals, whether it's aggressive growth or steady income.\nOngoing Monitoring: Regular reviews and rebalancing to adapt to market shifts.\nPerformance Tracking: Detailed reports and analytics to keep you informed every step of the way.\n\nWith Royalty Research Alerts, your trades work smarter, not harder, ensuring optimal returns while minimizing risks."
                     },
                     {
                       title: "Demat Account Services",
@@ -199,8 +199,8 @@ const OurServices = () => {
         {[
           {
             title: "Portfolio Management",
-            desc: "Professional management of your investments to balance risk and maximize returns.",
-            detailedInfo: "Building and maintaining a winning portfolio requires more than just picking stocks—it's about balance, diversification, and timely adjustments. Our Portfolio Management service takes the guesswork out of investing. We analyze your risk tolerance, financial objectives, and market trends to create a customized portfolio that grows with you.\n\nPersonalized Strategies: Tailored asset allocation based on your goals, whether it's aggressive growth or steady income.\nOngoing Monitoring: Regular reviews and rebalancing to adapt to market shifts.\nPerformance Tracking: Detailed reports and analytics to keep you informed every step of the way.\n\nWith Royalty Research Alerts, your investments work smarter, not harder, ensuring optimal returns while minimizing risks."
+            desc: "Professional management of your trades to balance risk and maximize returns.",
+            detailedInfo: "Building and maintaining a winning portfolio requires more than just picking stocks—it's about balance, diversification, and timely adjustments. Our Portfolio Management service takes the guesswork out of trading. We analyze your risk tolerance, financial objectives, and market trends to create a customized portfolio that grows with you.\n\nPersonalized Strategies: Tailored asset allocation based on your goals, whether it's aggressive growth or steady income.\nOngoing Monitoring: Regular reviews and rebalancing to adapt to market shifts.\nPerformance Tracking: Detailed reports and analytics to keep you informed every step of the way.\n\nWith Royalty Research Alerts, your trades work smarter, not harder, ensuring optimal returns while minimizing risks."
           },
           {
             title: "Demat Account Services",
