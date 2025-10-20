@@ -42,15 +42,15 @@ const Footer = () => {
           </div>
 
           {/* Address */}
-          <div className="flex items-start gap-2 text-sm max-w-xs">
+         {/* <div className="flex items-start gap-2 text-sm max-w-xs">
             <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
             </svg>
             <p className="text-gray-300">
-              {/* Address */}
+              
             </p>
-          </div>
-        </div>
+          </div> */}
+        </div> 
 
         {/* Divider */}
         <div className="border-t border-gray-700 my-6"></div>
@@ -107,13 +107,6 @@ const Footer = () => {
         <div className="text-center text-xs text-gray-400">
           <p>
             © 2025 All rights Reserved by Royalty Research Alert. •{" "}
-            <a href="/privacy" className="hover:text-gray-300 transition-colors">Privacy</a> •{" "}
-            <a href="/compliance" className="hover:text-gray-300 transition-colors">Compliance</a> •{" "}
-            <a href="/terms" className="hover:text-gray-300 transition-colors">Terms</a> •{" "}
-            <a href="/eula" className="hover:text-gray-300 transition-colors">EULA</a> •{" "}
-            <a href="/cancellation" className="hover:text-gray-300 transition-colors">Cancellation & Refund</a> •{" "}
-            <a href="/corporate" className="hover:text-gray-300 transition-colors">Corporate Information</a> •{" "}
-            <a href="/escalation" className="hover:text-gray-300 transition-colors">Escalation Matrix</a>
           </p>
         </div>
       </div>
