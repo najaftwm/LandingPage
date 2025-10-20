@@ -1,5 +1,5 @@
 import React from 'react'
-import { HeroSection, Courses, Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer } from './components'
+import { HeroSection, Courses, Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer,DematAccount,TradingServices,ReseachAlert, UrgencyStrip } from './components'
 
 function App() {
   return (
@@ -7,14 +7,18 @@ function App() {
       {/* Main Website Content */}
       <HeroSection/>
       <OurServices/>
+      <ReseachAlert/>
+      <DematAccount/>
+      <TradingServices/>
       {/* <Courses/> */}
       <Categories/>
       <FeedBack/>
-      <HowItWorks/>
+      {/* <HowItWorks/> */}
       <WhyWeStandOut/>
       <FAQ/>
       <Footer/>
       <MoveToTop/>
+      <UrgencyStrip/>
     </div>
   )
 }

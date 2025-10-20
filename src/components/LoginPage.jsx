@@ -11,6 +11,9 @@ const LoginPage = ({ embedded = false }) => {
     phone: "",
     state: "",
     language: "",
+    experience: "",
+    market: "",
+    platform: "",
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -42,9 +45,10 @@ const LoginPage = ({ embedded = false }) => {
   ];
 
   const experiences = [
-    "Beginner",
-    "Intermediate",
-    "Advanced",
+    "I'm a Beginner(0-6 months)",
+    "I have Some Experience (6-12 Months)",
+    "I'm an advanced Trader (2+ Years)",
+    "I'm a professional Trader",
   ];
 
   const markets = [
@@ -174,6 +178,9 @@ const LoginPage = ({ embedded = false }) => {
             email: formData.email,
             state: formData.state,
             language: formData.language,
+            experience: formData.experience,
+            market: formData.market,
+            platform: formData.platform,
           }
         );
         toast.success("Lead submitted successfully!");

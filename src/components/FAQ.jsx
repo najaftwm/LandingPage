@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Plus, X } from 'lucide-react'
+import FAQImage from '../assets/FAQ.png'
 
 const FAQ = () => {
   // State to track which FAQ items are open (for mobile click functionality)
@@ -17,6 +18,22 @@ const FAQ = () => {
     {
       question: "What is the area of expertise of Royalty Research Alerts",
       answer: "Our team has extensive experience in the stock market, with a proven track record of delivering results."
+    },
+    {
+      question: "What is a Demat Account?",
+      answer: "A Demat (Dematerialized) account holds your shares and securities in electronic form, making trading safer and more efficient."
+    },
+    {
+      question: "Do I need prior experience to open an account?",
+      answer: "Absolutely not! We're specialized in helping beginners start from scratch."
+    },
+    {
+      question: "How long does it take to open an account?",
+      answer: "Typically 1-2 business days with our fast-track process."
+    },
+    {
+      question: "Are there any fees?",
+      answer: "We offer competitive, transparent pricing – no hidden charges in our kingdom."
     }
   ]
 
@@ -46,7 +63,14 @@ const FAQ = () => {
             <br />
             solutions
           </h2>
-          <p className="text-gray-600 text-lg">For more queries, feel free to reach us.</p>
+          <p className="text-gray-600 text-lg mb-8">For more queries, feel free to reach us.</p>
+          <div className="w-full max-w-md">
+            <img 
+              src={FAQImage}
+              alt="FAQ illustration" 
+              className="w-full h-[12.5rem] md:h-[18rem] object-contain pr-13"
+            />
+          </div>
         </div>
 
         {/* Right accordion list */}

@@ -13,19 +13,19 @@ const WhyChooseUs = () => {
       icon: <FaUserTie size={24} />,
       title: "Trusted Expertise",
       description:
-        "Decades of market experience and analytical depth help us deliver research-backed, confident recommendations.",
+        "Guiding beginners and seasoned traders alike with reliable, professional support.",
     },
     {
       icon: <FaChartLine size={24} />,
-      title: "Comprehensive Services",
+      title: "Quick & Easy Services",
       description:
-        "From portfolio management to derivatives, we provide complete trading solutions under one roof.",
+        "Open your Demat account, start trading, and access our services effortlessly.",
     },
     {
       icon: <FaLightbulb size={24} />,
       title: "Tailored Strategies",
       description:
-        "Every trader is unique — our research is personalized to align with your financial goals and risk appetite.",
+        "Every trader is unique - our research is personalized to align with your financial goals and risk appetite.",
     },
     {
       icon: <FaRegClock size={24} />,

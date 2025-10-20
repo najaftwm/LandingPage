@@ -11,8 +11,12 @@ import Footer from "./Footer"
 import LoginPage from "./LoginPage";
 
 import WhyWeStandOut from "./WhyWeStandOut";
+import DematAccount from "./DematAccount";
+import TradingServices from "./TradingServices";
+import ReseachAlert from "./ReseachAlert";
+import UrgencyStrip from "./UrgencyStrip";
 
 
-export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer,LoginPage }
+export { Navbar,HeroSection,Courses,Categories,FeedBack,HowItWorks,FAQ,MoveToTop,OurServices,WhyWeStandOut,Footer,LoginPage,DematAccount,TradingServices,ReseachAlert, UrgencyStrip }
 
 

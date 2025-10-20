@@ -22,6 +22,18 @@ const FeedBack = () => {
       role: "Bangalore",
       testimonial: "Excellent Demat and equity services—seamless and reliable."
     },
+    {
+      id: 4,
+      name: "Rohit S.",
+      role: "Beginner Trader",
+      testimonial: "Royalty Research Alerts made opening my first Demat account super easy! Their support team helped me understand everything step by step."
+    },
+    {
+      id: 5,
+      name: "Sneha M.",
+      role: "Equity Investor",
+      testimonial: "I started trading confidently after joining Royalty Research Alerts. Their market research is accurate and very helpful."
+    },
     
   ];
 
