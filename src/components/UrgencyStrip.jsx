@@ -62,7 +62,7 @@ const UrgencyStrip = () => {
       <div className="fixed left-1/2 -translate-x-1/2 bottom-4 md:bottom-6 w-[80%] md:w-[80%] z-40">
         <div className="flex items-center justify-between gap-3 md:gap-4 bg-[#0b1f2a] text-white rounded-lg shadow-xl px-4 py-3 md:px-6 md:py-4">
           <div className="flex items-center gap-2 text-sm md:text-base">
-            <span className="font-semibold">Urgency Creation:</span>
+            <span className="font-semibold">Offers Expires In:</span>
             <span aria-live="polite" className="tabular-nums tracking-wide">{timeLabel}</span>
           </div>
           <button

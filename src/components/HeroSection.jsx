@@ -7,11 +7,11 @@ const HeroSection = () => {
   return (
     <section id="hero" className="w-full bg-white relative">
       {/* SEBI Registration - Top */}
-      <div className="absolute top-4 left-4 md:top-6 md:left-8 z-20">
+      {/* <div className="absolute top-4 left-4 md:top-6 md:left-8 z-20">
         <p className="text-xs md:text-sm text-white/90 font-medium bg-black/30 px-3 py-2 rounded-lg backdrop-blur-sm">
           SEBI Registration Number - <span className="font-bold text-[#27b018]">INH000010821</span>
         </p>
-      </div>
+      </div> */}
       
       {/* Logo */}
       {/* <div className="absolute top-4 left-3 md:top-0 md:left-8 z-10">
