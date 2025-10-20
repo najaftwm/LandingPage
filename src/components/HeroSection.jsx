@@ -37,7 +37,7 @@ const HeroSection = () => {
             className="text-3xl md:text-6xl font-extrabold text-[#27b018] leading-snug md:leading-[4.5rem] mb-4"
           >
             <span className="block md:whitespace-nowrap ">Unlock Smart Trading</span>
-            <span className="block">Decisions with Royalty Research Alerts</span>
+            <span className="block">Decisions with Us</span>
           </h2>
           <h3 className="text-md md:text-2xl font-bold text-white mb-5">
           Get Expert Research Alerts, Personalized Trading Guidance & Easy Demat Account Setup-All in One Place
