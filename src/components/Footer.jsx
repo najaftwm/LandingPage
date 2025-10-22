@@ -36,7 +36,7 @@ const Footer = () => {
                   <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                   <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
                 </svg>
-                service@royaltyresearch.com
+                service@rra.com
               </a>
             </div>
           </div>
@@ -106,7 +106,7 @@ const Footer = () => {
         {/* Bottom Links */}
         <div className="text-center text-xs text-gray-400">
           <p>
-            © 2025 All rights Reserved by Royalty Research Alert. •{" "}
+            © 2025 All rights Reserved by RRA. •{" "}
           </p>
         </div>
       </div>

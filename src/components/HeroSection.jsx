@@ -5,7 +5,7 @@ import LoginPage from './LoginPage';
 
 const HeroSection = () => {
   return (
-    <section id="hero" className="w-full bg-white relative">
+    <section id="hero" className="w-full bg-white relative m-0 p-0">
       {/* SEBI Registration - Top */}
       {/* <div className="absolute top-4 left-4 md:top-6 md:left-8 z-20">
         <p className="text-xs md:text-sm text-white/90 font-medium bg-black/30 px-3 py-2 rounded-lg backdrop-blur-sm">
@@ -19,7 +19,7 @@ const HeroSection = () => {
       </div> */}
 
       {/* Hero Image */}
-      <div className="absolute inset-0 w-full h-[900px] overflow-hidden">
+      <div className="absolute inset-0 w-full h-[900px]">
         <img
           src={HeroImage}
           alt="Hero Banner"
@@ -43,7 +43,7 @@ const HeroSection = () => {
           Get Expert Research Alerts, Personalized Trading Guidance & Easy Demat Account Setup-All in One Place
           </h3>
           <p className="text-sm md:text-base text-white">
-          Welcome to Royalty Research Alerts, your trusted partner for trading success. Whether you're a beginner opening your first Demat account or an active trader seeking expert research insights, we help you trade smarter, faster, and more confidently.
+          Welcome to RRA, your trusted partner for trading success. Whether you're a beginner opening your first Demat account or an active trader seeking expert research insights, we help you trade smarter, faster, and more confidently.
           Our team of SEBI-registered analysts and trading professionals delivers research-backed alerts, hands-on trading support, and complete Demat setup guidance — everything you need to start or scale your trading journey.
           </p>
         </div>
@@ -51,7 +51,7 @@ const HeroSection = () => {
         {/* Right Section (Login Form) */}
         <div id="hero-register" className="w-full mt-8 md:mt-7 md:max-w-xl md:ml-auto">
           <p className="text-lg md:text-xl font-bold text-white mb-4 text-center md:text-left bg-gradient-to-r from-[#27b018] to-[#27b018] px-4 py-3 rounded-lg shadow-lg">
-             Start your journey today — register for free stock alerts and trading support.
+             Start your journey today — register for your free Demat account, trading support and stock alerts.
           </p>
           <LoginPage embedded={true} />
         </div>

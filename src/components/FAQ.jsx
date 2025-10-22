@@ -8,15 +8,15 @@ const FAQ = () => {
   
   const faqData = [
     {
-      question: "What services does Royalty Research Alerts offer?",
+      question: "What services does RRA offer?",
       answer: "We offer a range of services, including portfolio management, demat account, equity trading, positional trading, swing trading, commodity trading, and options and futures."
     },
     {
-      question: "How do I get started with Royalty Research Alerts?",
+      question: "How do I get started with RRA?",
       answer: "Getting started is easy! Simply sign up on our website and choose the services that suit your needs."
     },
     {
-      question: "What is the area of expertise of Royalty Research Alerts",
+      question: "What is the area of expertise of RRA",
       answer: "Our team has extensive experience in the stock market, with a proven track record of delivering results."
     },
     {
