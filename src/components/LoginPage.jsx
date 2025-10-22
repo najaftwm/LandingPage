@@ -113,8 +113,7 @@ const LoginPage = ({ embedded = false }) => {
     if (!formData.phone || !phoneRegex.test(formData.phone))
       newErrors.phone = "Valid 10-digit Indian phone number is required";
     if (!formData.experience.trim()) newErrors.experience = "Trading experience is required";
-    if (!formData.market.trim()) newErrors.market = "Market selection is required";
-    if (!formData.researchMarket.trim()) newErrors.researchMarket = "Research market selection is required";
+    // market and researchMarket are optional
     if (!formData.state.trim()) newErrors.state = "State is required";
     if (!formData.language) newErrors.language = "Please select a language";
     if (!formData.interest.trim()) newErrors.interest = "Please select your interest";
@@ -184,8 +183,8 @@ const LoginPage = ({ embedded = false }) => {
             state: formData.state,
             language: formData.language,
             experience: formData.experience,
-            market: formData.market,
-            researchMarket: formData.researchMarket,
+            market: formData.market || null,
+            researchMarket: formData.researchMarket || null,
             platform: formData.platform,
             interest: formData.interest,
           }
@@ -299,6 +298,26 @@ const LoginPage = ({ embedded = false }) => {
                 )}
 
                 <select
+                  name="interest"
+                  value={formData.interest}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting}
+                  className={`w-full border ${
+                    errors.interest ? "border-red-400" : "border-gray-300"
+                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                >
+                  <option value="">What are you interested in?</option>
+                  {interests.map((int) => (
+                    <option key={int} value={int}>
+                      {int}
+                    </option>
+                  ))}
+                </select>
+                {errors.interest && (
+                  <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
+                )}
+
+                <select
                   name="market"
                   value={formData.market}
                   onChange={handleInputChange}
@@ -336,26 +355,6 @@ const LoginPage = ({ embedded = false }) => {
                 </select>
                 {errors.researchMarket && (
                   <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
-                )}
-
-                <select
-                  name="interest"
-                  value={formData.interest}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.interest ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">What are you interested in?</option>
-                  {interests.map((int) => (
-                    <option key={int} value={int}>
-                      {int}
-                    </option>
-                  ))}
-                </select>
-                {errors.interest && (
-                  <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
                 )}
 
                 <select
@@ -552,6 +551,27 @@ const LoginPage = ({ embedded = false }) => {
                 <p className="text-red-500 text-xs mt-1">{errors.experience}</p>
               )}
 
+              {/* Interest Dropdown */}
+              <select
+                name="interest"
+                value={formData.interest}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                className={`w-full border ${
+                  errors.interest ? "border-red-400" : "border-gray-300"
+                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+              >
+                <option value="">What are you interested in?</option>
+                {interests.map((int) => (
+                  <option key={int} value={int}>
+                    {int}
+                  </option>
+                ))}
+              </select>
+              {errors.interest && (
+                <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
+              )}
+
               {/* Market Dropdown */}
               <select
                 name="market"
@@ -592,27 +612,6 @@ const LoginPage = ({ embedded = false }) => {
               </select>
               {errors.researchMarket && (
                 <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
-              )}
-
-              {/* Interest Dropdown */}
-              <select
-                name="interest"
-                value={formData.interest}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.interest ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-              >
-                <option value="">What are you interested in?</option>
-                {interests.map((int) => (
-                  <option key={int} value={int}>
-                    {int}
-                  </option>
-                ))}
-              </select>
-              {errors.interest && (
-                <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
               )}
               
               <select
