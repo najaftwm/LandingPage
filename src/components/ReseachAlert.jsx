@@ -1,8 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import dashboardImage from "../assets/dashboard.png"; // using existing image as dashboard placeholder
+import LoginPage from './LoginPage';
 
 const ReseachAlert = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Optional: lock body scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    return () => document.body.classList.remove('overflow-hidden');
+  }, [isModalOpen]);
   const cards = [
     {
       title: "Daily Stock Ideas",
@@ -83,10 +95,7 @@ const ReseachAlert = () => {
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.96 }}
               className="flex items-center justify-center w-full sm:w-auto mx-auto bg-[#20B486] hover:bg-[#1a9068] text-white font-semibold py-4 px-6 rounded-lg shadow-lg"
-              onClick={() => {
-                const el = document.getElementById('hero-register');
-                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
+              onClick={() => setIsModalOpen(true)}
             >
               Start Receiving Alerts Now
               
@@ -119,6 +128,64 @@ const ReseachAlert = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          aria-modal="true"
+          role="dialog"
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setIsModalOpen(false)}
+          />
+
+          {/* Modal Panel */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="relative z-10 w-full max-w-xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl"
+          >
+            {/* Floating Close (always visible) */}
+            <button
+              aria-label="Close"
+              onClick={() => setIsModalOpen(false)}
+              className="fixed top-4 right-4 z-50 p-3 bg-white rounded-full shadow-lg border hover:bg-gray-50 text-gray-900"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="relative z-10 bg-white rounded-2xl shadow-2xl overflow-hidden">
+              {/* Header with Close */}
+              <div className="flex items-center justify-between px-5 py-4 border-b">
+                <h3 className="text-lg font-semibold text-gray-900">Get Started</h3>
+                <button
+                  aria-label="Close"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2.5 rounded-full hover:bg-gray-100 text-gray-800"
+                >
+                  {/* X icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Body: reuse LoginPage */}
+              <div className="p-4 sm:p-6">
+                <LoginPage embedded={true} />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 };

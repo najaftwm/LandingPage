@@ -29,7 +29,7 @@ const FAQ = () => {
     },
     {
       question: "How long does it take to open an account?",
-      answer: "Typically 1-2 business days with our fast-track process."
+      answer: "Typically 1-2 hours with our fast-track process."
     },
     {
       question: "Are there any fees?",

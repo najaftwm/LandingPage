@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import { Target, BarChart3, PieChart } from "lucide-react";
 import ChartImage from '../assets/chart.png';
+import LoginPage from './LoginPage';
 
 const TradingServices = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Optional: lock body scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    return () => document.body.classList.remove('overflow-hidden');
+  }, [isModalOpen]);
   return (
     <section className="py-16 bg-white" id="trading-services">
       <div className="max-w-7xl mx-auto px-6">
@@ -51,10 +63,7 @@ const TradingServices = () => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="bg-[#20B486] text-white px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#1a9a73] transition-colors duration-300 shadow-lg hover:shadow-xl"
-            onClick={() => {
-              const el = document.getElementById('hero-register');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }}
+              onClick={() => setIsModalOpen(true)}
             >
               Talk to a Trading Expert
             </motion.button>
@@ -116,6 +125,64 @@ const TradingServices = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          aria-modal="true"
+          role="dialog"
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setIsModalOpen(false)}
+          />
+
+          {/* Modal Panel */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="relative z-10 w-full max-w-xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl"
+          >
+            {/* Floating Close (always visible) */}
+            <button
+              aria-label="Close"
+              onClick={() => setIsModalOpen(false)}
+              className="fixed top-4 right-4 z-50 p-3 bg-white rounded-full shadow-lg border hover:bg-gray-50 text-gray-900"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </button>
+
+            <div className="relative z-10 bg-white rounded-2xl shadow-2xl overflow-hidden">
+              {/* Header with Close */}
+              <div className="flex items-center justify-between px-5 py-4 border-b">
+                <h3 className="text-lg font-semibold text-gray-900">Get Started</h3>
+                <button
+                  aria-label="Close"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2.5 rounded-full hover:bg-gray-100 text-gray-800"
+                >
+                  {/* X icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Body: reuse LoginPage */}
+              <div className="p-4 sm:p-6">
+                <LoginPage embedded={true} />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 };

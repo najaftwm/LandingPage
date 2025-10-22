@@ -7,12 +7,12 @@ import FormBg from '../assets/formbg.jpg';
 const LoginPage = ({ embedded = false }) => {
   const [formData, setFormData] = useState({
     name: "",
-    email: "",
     phone: "",
     state: "",
     language: "",
     experience: "",
     market: "",
+    researchMarket: "",
     platform: "",
     interest: "",
   });
@@ -110,12 +110,11 @@ const LoginPage = ({ embedded = false }) => {
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-      newErrors.email = "Valid email is required";
     if (!formData.phone || !phoneRegex.test(formData.phone))
       newErrors.phone = "Valid 10-digit Indian phone number is required";
     if (!formData.experience.trim()) newErrors.experience = "Trading experience is required";
     if (!formData.market.trim()) newErrors.market = "Market selection is required";
+    if (!formData.researchMarket.trim()) newErrors.researchMarket = "Research market selection is required";
     if (!formData.state.trim()) newErrors.state = "State is required";
     if (!formData.language) newErrors.language = "Please select a language";
     if (!formData.interest.trim()) newErrors.interest = "Please select your interest";
@@ -182,11 +181,11 @@ const LoginPage = ({ embedded = false }) => {
           {
             name: formData.name,
             phone: phoneNumber,
-            email: formData.email,
             state: formData.state,
             language: formData.language,
             experience: formData.experience,
             market: formData.market,
+            researchMarket: formData.researchMarket,
             platform: formData.platform,
             interest: formData.interest,
           }
@@ -257,11 +256,10 @@ const LoginPage = ({ embedded = false }) => {
           ) : (
             <>
               <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-                {[
-                  { name: "name", placeholder: "Full Name" },
-                  { name: "email", placeholder: "Email Address", type: "email" },
-                  { name: "phone", placeholder: "Contact (10 digits)" },
-                ].map((input) => (
+              {[
+                { name: "name", placeholder: "Enter Your Full Name" },
+                { name: "phone", placeholder: "Enter Your Contact Number (10 digits)" },
+              ].map((input) => (
                   <div key={input.name}>
                     <input
                       type={input.type || "text"}
@@ -318,6 +316,26 @@ const LoginPage = ({ embedded = false }) => {
                 </select>
                 {errors.market && (
                   <p className="text-red-500 text-xs mt-1">{errors.market}</p>
+                )}
+
+                <select
+                  name="researchMarket"
+                  value={formData.researchMarket}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting}
+                  className={`w-full border ${
+                    errors.researchMarket ? "border-red-400" : "border-gray-300"
+                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                >
+                  <option value="">Select Market you want to Research</option>
+                  {markets.map((mkt) => (
+                    <option key={mkt} value={mkt}>
+                      {mkt}
+                    </option>
+                  ))}
+                </select>
+                {errors.researchMarket && (
+                  <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
                 )}
 
                 <select
@@ -492,7 +510,6 @@ const LoginPage = ({ embedded = false }) => {
               {/* Inputs */}
               {[
                 { name: "name", placeholder: "Full Name" },
-                { name: "email", placeholder: "Email Address", type: "email" },
                 { name: "phone", placeholder: "Contact (10 digits)" },
                 
               ].map((input) => (
@@ -554,6 +571,27 @@ const LoginPage = ({ embedded = false }) => {
               </select>
               {errors.market && (
                 <p className="text-red-500 text-xs mt-1">{errors.market}</p>
+              )}
+
+              {/* Research Market Dropdown */}
+              <select
+                name="researchMarket"
+                value={formData.researchMarket}
+                onChange={handleInputChange}
+                disabled={isSubmitting}
+                className={`w-full border ${
+                  errors.researchMarket ? "border-red-400" : "border-gray-300"
+                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+              >
+                <option value="">Select Market you want to Research</option>
+                {markets.map((mkt) => (
+                  <option key={mkt} value={mkt}>
+                    {mkt}
+                  </option>
+                ))}
+              </select>
+              {errors.researchMarket && (
+                <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
               )}
 
               {/* Interest Dropdown */}

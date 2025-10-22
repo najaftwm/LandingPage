@@ -1,5 +1,5 @@
 import React from 'react';
-import Logo from '../assets/logo.png';
+// import Logo from '../assets/logo.png';
 import HeroImage from '../assets/hero.jpg';
 import LoginPage from './LoginPage';
 
@@ -19,7 +19,7 @@ const HeroSection = () => {
       </div> */}
 
       {/* Hero Image */}
-      <div className="absolute inset-0 w-full h-[900px]">
+      <div className="absolute inset-0 w-full h-[1000px]">
         <img
           src={HeroImage}
           alt="Hero Banner"
@@ -32,7 +32,7 @@ const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 max-w-[90%] md:max-w-[97%] mx-auto grid md:grid-cols-2 gap-6 md:gap-12 pt-24 pb-24 md:pt-12 md:pb-40">
         {/* Left Section */}
-        <div className="flex flex-col justify-start gap-4 md:gap-5 md:mt-20">
+        <div className="flex flex-col justify-start gap-4 md:gap-5 md:mt-7">
           <h2
             className="text-3xl md:text-6xl font-extrabold text-[#27b018] leading-snug md:leading-[4.5rem] mb-4"
           >
