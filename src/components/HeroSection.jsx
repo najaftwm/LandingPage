@@ -19,7 +19,7 @@ const HeroSection = () => {
       </div> */}
 
       {/* Hero Image */}
-      <div className="absolute inset-0 w-full h-[1000px]">
+      <div className="absolute inset-0 w-full h-[900px]">
         <img
           src={HeroImage}
           alt="Hero Banner"
