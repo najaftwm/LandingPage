@@ -317,43 +317,49 @@ const LoginPage = ({ embedded = false }) => {
                   <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
                 )}
 
-                <select
-                  name="market"
-                  value={formData.market}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.market ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">Select Market you want to Trade in</option>
-                  {markets.map((mkt) => (
-                    <option key={mkt} value={mkt}>
-                      {mkt}
-                    </option>
-                  ))}
-                </select>
-                {errors.market && (
+                {/* Show trading market field only if user wants to start trading */}
+                {formData.interest === "I want to start trading" && (
+                  <select
+                    name="market"
+                    value={formData.market}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                    className={`w-full border ${
+                      errors.market ? "border-red-400" : "border-gray-300"
+                    } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                  >
+                    <option value="">Select Market you want to Trade in</option>
+                    {markets.map((mkt) => (
+                      <option key={mkt} value={mkt}>
+                        {mkt}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {formData.interest === "I want to start trading" && errors.market && (
                   <p className="text-red-500 text-xs mt-1">{errors.market}</p>
                 )}
 
-                <select
-                  name="researchMarket"
-                  value={formData.researchMarket}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.researchMarket ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">Select Market you want to Research</option>
-                  {markets.map((mkt) => (
-                    <option key={mkt} value={mkt}>
-                      {mkt}
-                    </option>
-                  ))}
-                </select>
-                {errors.researchMarket && (
+                {/* Show research market field only if user only wants research alerts */}
+                {formData.interest === "I only want research alerts" && (
+                  <select
+                    name="researchMarket"
+                    value={formData.researchMarket}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                    className={`w-full border ${
+                      errors.researchMarket ? "border-red-400" : "border-gray-300"
+                    } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                  >
+                    <option value="">Select Market you want to Research</option>
+                    {markets.map((mkt) => (
+                      <option key={mkt} value={mkt}>
+                        {mkt}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {formData.interest === "I only want research alerts" && errors.researchMarket && (
                   <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
                 )}
 
@@ -572,45 +578,49 @@ const LoginPage = ({ embedded = false }) => {
                 <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
               )}
 
-              {/* Market Dropdown */}
-              <select
-                name="market"
-                value={formData.market}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.market ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-              >
-                <option value="">Select Market you want to Trade in</option>
-                {markets.map((mkt) => (
-                  <option key={mkt} value={mkt}>
-                    {mkt}
-                  </option>
-                ))}
-              </select>
-              {errors.market && (
+              {/* Show trading market field only if user wants to start trading */}
+              {formData.interest === "I want to start trading" && (
+                <select
+                  name="market"
+                  value={formData.market}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting}
+                  className={`w-full border ${
+                    errors.market ? "border-red-400" : "border-gray-300"
+                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                >
+                  <option value="">Select Market you want to Trade in</option>
+                  {markets.map((mkt) => (
+                    <option key={mkt} value={mkt}>
+                      {mkt}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {formData.interest === "I want to start trading" && errors.market && (
                 <p className="text-red-500 text-xs mt-1">{errors.market}</p>
               )}
 
-              {/* Research Market Dropdown */}
-              <select
-                name="researchMarket"
-                value={formData.researchMarket}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.researchMarket ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-              >
-                <option value="">Select Market you want to Research</option>
-                {markets.map((mkt) => (
-                  <option key={mkt} value={mkt}>
-                    {mkt}
-                  </option>
-                ))}
-              </select>
-              {errors.researchMarket && (
+              {/* Show research market field only if user only wants research alerts */}
+              {formData.interest === "I only want research alerts" && (
+                <select
+                  name="researchMarket"
+                  value={formData.researchMarket}
+                  onChange={handleInputChange}
+                  disabled={isSubmitting}
+                  className={`w-full border ${
+                    errors.researchMarket ? "border-red-400" : "border-gray-300"
+                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                >
+                  <option value="">Select Market you want to Research</option>
+                  {markets.map((mkt) => (
+                    <option key={mkt} value={mkt}>
+                      {mkt}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {formData.interest === "I only want research alerts" && errors.researchMarket && (
                 <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
               )}
               
