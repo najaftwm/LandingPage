@@ -16,6 +16,7 @@ const LoginPage = ({ embedded = false }) => {
     platform: "",
     platformName: "",
     interest: "",
+    usesPlatform: "",
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,20 +33,10 @@ const LoginPage = ({ embedded = false }) => {
   const AUTH_TOKEN =
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLTc2OTU0MUI3QjY3QzQ5MSIsImlhdCI6MTc1OTcyNDI0NywiZXhwIjoxOTE3NDA0MjQ3fQ.PuwWxKPkSqhjFXSKPQmXX7kU40BPCXQLqM6PLWNP_p-iq6PdYSEJn--uOyB4vdY2Dr89NrtuMcU-WsI5ih5NoA";
   const CUSTOMER_ID = "C-769541B7B67C491";
-
   const phoneRegex = /^\d{10}$/;
 
   const languages = [
-    "English",
-    "Hindi",
-    "Tamil",
-    "Telugu",
-    "Kannada",
-    "Malayalam",
-    "Bengali",
-    "Gujarati",
-    "Marathi",
-    "Punjabi",
+    "English", "Hindi", "Tamil", "Telugu", "Kannada", "Malayalam", "Bengali", "Gujarati", "Marathi", "Punjabi"
   ];
 
   const experiences = [
@@ -55,56 +46,31 @@ const LoginPage = ({ embedded = false }) => {
   ];
 
   const markets = [
-    "NSE Futures",
-    "MCX",
-    "NSE Options",
-    "MCX Option",
-    "Crypto",
-    "Forex",
-    "US Stocks",
-    "Comex",
+    "NSE Futures", "MCX", "NSE Options", "MCX Option", "Crypto", "Forex", "US Stocks", "Comex"
   ];
 
   const interests = [
-    "I want to start trading",
-    "I only want research alerts",
+    "Trade",
+    "Research",
   ];
 
   const states = [
-    "Andhra Pradesh",
-    "Arunachal Pradesh",
-    "Assam",
-    "Bihar",
-    "Chhattisgarh",
-    "Goa",
-    "Gujarat",
-    "Haryana",
-    "Himachal Pradesh",
-    "Jharkhand",
-    "Karnataka",
-    "Kerala",
-    "Madhya Pradesh",
-    "Maharashtra",
-    "Manipur",
-    "Meghalaya",
-    "Mizoram",
-    "Nagaland",
-    "Odisha",
-    "Punjab",
-    "Rajasthan",
-    "Sikkim",
-    "Tamil Nadu",
-    "Telangana",
-    "Tripura",
-    "Uttar Pradesh",
-    "Uttarakhand",
-    "West Bengal",
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+    "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab",
+    "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
   ];
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
+    if (successMessage) setSuccessMessage("");
+    if (otpSentMessage) setOtpSentMessage("");
+  };
+
+  const handleCheckboxChange = (name, value) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+    if (errors[name]) setErrors(prev => ({ ...prev, [name]: "" }));
     if (successMessage) setSuccessMessage("");
     if (otpSentMessage) setOtpSentMessage("");
   };
@@ -126,30 +92,52 @@ const LoginPage = ({ embedded = false }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  // === NEW: Check Phone + send OTP ===
+  const handleCheckPhoneAndSendOTP = async (e) => {
+    console.log("Checking phone and sending OTP for:", formData.phone);
+    e.preventDefault();
+    // if (!validateForm(true)) return;
+
+    setIsSubmitting(true);
+    try {
+      // 1️⃣ Check if phone exists in DB
+      const { data } = await axios.post(
+        "https://tnscrm.twmresearchalert.com/gateway/leadReg.php",
+        { mode: "checkPhone", name: formData.name, phone: formData.phone }
+      );
+      console.log("CheckPhone Response:", data);
+
+      if (data['status'] === "success") {
+        // Store tempId in localStorage
+        console.log("TempId stored:", data.tempId);
+        localStorage.setItem("tempId", data.tempId);
+        // 2️⃣ Send OTP after checking phone
+        await sendOTP(formData.phone);
+      }
+    } catch (err) {
+      const msg = err.response?.data?.message || "Something went wrong";
+      setSubmitError(msg);
+      toast.error(msg);
+    }
+    setIsSubmitting(false);
+  };
+
   const sendOTP = async (phoneNumber) => {
+    console.log("Sending OTP to:", phoneNumber);
     try {
       const url = "https://cpaas.messagecentral.com/verification/v3/send";
-      const params = {
-        countryCode: "91",
-        flowType: "SMS",
-        mobileNumber: phoneNumber,
-        customerId: CUSTOMER_ID,
-      };
-      const response = await axios.post(url, null, {
-        params,
-        headers: { authToken: AUTH_TOKEN },
-      });
-
+      const params = { countryCode: "91", flowType: "SMS", mobileNumber: phoneNumber, customerId: CUSTOMER_ID };
+      const response = await axios.post(url, null, { params, headers: { authToken: AUTH_TOKEN } });
       const id = response.data?.data?.verificationId;
       if (id) {
+        console.log("OTP sent successfully. Verification ID:", id);
         setVerificationId(id);
         setShowOTPModal(true);
-        setSubmitError("");
         setOtpSentMessage("OTP sent to your phone number!");
+        setTimeout(() => setOtpSentMessage(""), 5000);
         toast.success("OTP sent successfully");
       } else {
-        setSubmitError("Failed to send OTP");
-        toast.error("Failed to send OTP");
+        throw new Error("Failed to send OTP");
       }
     } catch {
       setSubmitError("Failed to send OTP");
@@ -162,29 +150,15 @@ const LoginPage = ({ embedded = false }) => {
       const response = await axios.get(
         "https://cpaas.messagecentral.com/verification/v3/validateOtp",
         {
-          params: {
-            countryCode: "91",
-            mobileNumber: phoneNumber,
-            verificationId,
-            customerId: CUSTOMER_ID,
-            code,
-          },
-          headers: { authToken: AUTH_TOKEN },
+          params: { countryCode: "91", mobileNumber: phoneNumber, verificationId, customerId: CUSTOMER_ID, code },
+          headers: { authToken: AUTH_TOKEN }
         }
       );
-
-      const status = response.data?.data?.verificationStatus;
-      if (
-        response.data.responseCode === 200 &&
-        status === "VERIFICATION_COMPLETED"
-      ) {
+      if (response.data.responseCode === 200 && response.data?.data?.verificationStatus === "VERIFICATION_COMPLETED") {
         toast.success("OTP verified successfully!");
         setIsOTPVerified(true);
         setShowAllFields(true);
         setShowOTPModal(false);
-        setOtp("");
-        setOtpError("");
-        setOtpSentMessage("");
       } else {
         setOtpError("Invalid OTP. Please try again.");
         toast.error("OTP verification failed");
@@ -193,14 +167,6 @@ const LoginPage = ({ embedded = false }) => {
       setOtpError("Failed to validate OTP. Please try again.");
       toast.error("OTP validation error");
     }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm(true)) return; // Only validate name and phone initially
-    setIsSubmitting(true);
-    await sendOTP(formData.phone);
-    setIsSubmitting(false);
   };
 
   const handleOTPSubmit = (e) => {
@@ -213,682 +179,228 @@ const LoginPage = ({ embedded = false }) => {
     validateOTP(formData.phone, verificationId, otp);
   };
 
+  // === FINAL SUBMIT ===
   const handleFinalSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm(false)) return; // Validate all fields
-    setIsSubmitting(true);
+    if (!validateForm(false)) return;
 
+    const tempId = localStorage.getItem("tempId");
+    if (!tempId) {
+      setSubmitError("Invalid session. Please start over.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    console.log("Final submit data:", { mode: "submit", tempId, ...formData });
     try {
       await axios.post(
         "https://tnscrm.twmresearchalert.com/gateway/leadReg.php",
-        {
-          name: formData.name,
-          phone: formData.phone,
-          state: formData.state,
-          language: formData.language,
-          experience: formData.experience,
-          market: formData.market || null,
-          researchMarket: formData.researchMarket || null,
-          platform: formData.platform,
-          platformName: formData.platformName || null,
-          interest: formData.interest,
-        }
+        { mode: "submit", tempId, ...formData }
       );
-      toast.success("Lead submitted successfully!");
-      setSuccessMessage(
-        "Successfully registered! Our team will reach out to you shortly to help you get started."
-      );
-    } catch (error) {
-      toast.error("Failed to submit form. Please try again.");
+      toast.success("Registration completed successfully!");
+      setSuccessMessage("Successfully registered! Our team will reach out to you.");
+      localStorage.removeItem("tempId");
+    } catch {
       setSubmitError("Failed to submit form. Please try again.");
+      toast.error("Failed to submit form. Please try again.");
     }
-
     setIsSubmitting(false);
   };
 
-  if (embedded) {
-    return (
-      <div className="w-full">
-        <div className="w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300 relative overflow-hidden">
-          {/* Form Background Image */}
-          <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl">
-            <img
-              src={FormBg}
-              alt='Form Background'
-              className='w-full h-full object-cover opacity-30'
-            />
-          </div>
-          <div className="relative z-10">
-            <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-[#4a4a2e] tracking-wide drop-shadow-sm">
-              Register
-            </h2>
-
-            {submitError && (
-              <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
-            )}
-
-            {otpSentMessage && !successMessage && (
-              <p className="text-green-500 text-sm text-center mb-3">{otpSentMessage}</p>
-            )}
-
-            {successMessage ? (
-              <p className="text-green-600 text-center font-semibold text-lg">{successMessage}</p>
-            ) : (
-              <>
-                <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-                  {/* Name Field */}
-                  <div>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
-                      placeholder="Enter Your Full Name"
-                      disabled={isSubmitting}
-                      className={`w-full border ${errors.name ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                    />
-                    {errors.name && (
-                      <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                    )}
-                  </div>
-
-                  {/* Phone Field with Indian Flag */}
-                  <div>
-                    <div className="relative">
-                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center pointer-events-none">
-                        <span className="text-xl">🇮🇳</span>
-                        <span className="ml-1 text-sm text-gray-600">+91</span>
-                      </div>
-                      <input
-                        type="text"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleInputChange}
-                        placeholder="Enter Your Contact Number"
-                        disabled={isSubmitting}
-                        className={`w-full border ${errors.phone ? "border-red-400" : "border-gray-300"
-                          } rounded-md p-2.5 md:p-3 pl-20 md:pl-20 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                      />
-                    </div>
-                    {errors.phone && (
-                      <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
-                    )}
-                  </div>
-
-                  {/* Send OTP Button */}
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-[#124aad] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#093e9c] transition duration-300 disabled:opacity-50"
-                  >
-                    {isSubmitting ? "Sending OTP..." : "Send OTP"}
-                  </button>
-                </form>
-
-                {/* OTP Verification Section */}
-                {showOTPModal && (
-                  <div className="mt-6 bg-white border border-gray-200 p-4 rounded-xl shadow-md">
-                    <h3 className="text-blue-700 font-semibold text-center mb-3 text-sm md:text-base">Enter OTP</h3>
-                    <form onSubmit={handleOTPSubmit} className="flex gap-3 items-start">
-                      <input
-                        type="text"
-                        maxLength="6"
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                        placeholder="Enter OTP"
-                        className={`flex-1 border ${otpError ? "border-red-400" : "border-gray-300"
-                          } rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                      />
-                      <button
-                        type="submit"
-                        className="bg-[#124aad] text-[#eceae0] font-semibold py-2.5 px-4 rounded-md hover:bg-[#093e9c] transition duration-300 text-sm whitespace-nowrap"
-                      >
-                        Verify
-                      </button>
-                    </form>
-                    {otpError && (
-                      <p className="text-red-500 text-xs text-center mt-2">{otpError}</p>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => setShowOTPModal(false)}
-                      className="text-blue-600 text-xs text-center mt-2 hover:underline block w-full"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-
-                {/* All Fields Section - Show after OTP verification */}
-                {showAllFields && (
-                  <form onSubmit={handleFinalSubmit} className="mt-6 flex flex-col gap-3.5">
-                    {/* Trading Experience Radio Buttons */}
-                    <div className="space-y-2">
-                      <label className="text-md font-large text-gray-700">Trading Experience</label>
-                      <div className="flex flex-col sm:flex-row gap-4 mt-3">
-                        {experiences.map((exp) => (
-                          <label key={exp.value} className="flex items-center space-x-2 cursor-pointer">
-                            <input
-                              type="radio"
-                              name="experience"
-                              value={exp.value}
-                              checked={formData.experience === exp.value}
-                              onChange={handleInputChange}
-                              disabled={isSubmitting}
-                              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                            />
-                            <span className="text-sm text-gray-700">{exp.label}</span>
-                          </label>
-                        ))}
-                      </div>
-                      {errors.experience && (
-                        <p className="text-red-500 text-xs mt-1">{errors.experience}</p>
-                      )}
-                    </div>
-
-                    {/* Interest Checkboxes */}
-                    <div className="space-y-2">
-                      <label className="text-md font-large text-gray-700">What are you interested in?</label>
-                      <div className="flex flex-col sm:flex-row gap-3 mt-2">
-                        {interests.map((int) => (
-                          <label key={int} className="flex items-center space-x-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              name="interest"
-                              value={int}
-                              checked={formData.interest === int}
-                              onChange={handleInputChange}
-                              disabled={isSubmitting}
-                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                            <span className="text-sm text-gray-700">{int}</span>
-                          </label>
-                        ))}
-                      </div>
-                      {errors.interest && (
-                        <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
-                      )}
-                    </div>
-
-                    {/* Show trading market field only if user wants to start trading */}
-                    {formData.interest === "I want to start trading" && (
-                      <select
-                        name="market"
-                        value={formData.market}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        className={`w-full border ${errors.market ? "border-red-400" : "border-gray-300"
-                          } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                      >
-                        <option value="">Select Market you want to Trade in</option>
-                        {markets.map((mkt) => (
-                          <option key={mkt} value={mkt}>
-                            {mkt}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                    {formData.interest === "I want to start trading" && errors.market && (
-                      <p className="text-red-500 text-xs mt-1">{errors.market}</p>
-                    )}
-
-                    {/* Show research market field only if user only wants research alerts */}
-                    {formData.interest === "I only want research alerts" && (
-                      <select
-                        name="researchMarket"
-                        value={formData.researchMarket}
-                        onChange={handleInputChange}
-                        disabled={isSubmitting}
-                        className={`w-full border ${errors.researchMarket ? "border-red-400" : "border-gray-300"
-                          } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                      >
-                        <option value="">Select Market you want to Research</option>
-                        {markets.map((mkt) => (
-                          <option key={mkt} value={mkt}>
-                            {mkt}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                    {formData.interest === "I only want research alerts" && errors.researchMarket && (
-                      <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
-                    )}
-
-                    <select
-                      name="state"
-                      value={formData.state}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full border ${errors.state ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                    >
-                      <option value="">Select State</option>
-                      {states.map((st) => (
-                        <option key={st} value={st}>
-                          {st}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.state && (
-                      <p className="text-red-500 text-xs mt-1">{errors.state}</p>
-                    )}
-
-                    <select
-                      name="language"
-                      value={formData.language}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full border ${errors.language ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                    >
-                      <option value="">Select Language</option>
-                      {languages.map((lang) => (
-                        <option key={lang} value={lang}>
-                          {lang}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.language && (
-                      <p className="text-red-500 text-xs mt-1">{errors.language}</p>
-                    )}
-
-                    {/* Trading Platform Radio Buttons */}
-                    <div className="space-y-2">
-                      <label className="text-md font-large text-gray-700">Do you use any trading platform?</label>
-                      <div className="flex flex-col sm:flex-row gap-4 mt-3">
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="platform"
-                            value="Yes"
-                            checked={formData.platform === "Yes"}
-                            onChange={handleInputChange}
-                            disabled={isSubmitting}
-                            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700">Yes</span>
-                        </label>
-                        <label className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="platform"
-                            value="No"
-                            checked={formData.platform === "No"}
-                            onChange={handleInputChange}
-                            disabled={isSubmitting}
-                            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700">No</span>
-                        </label>
-                      </div>
-                      {errors.platform && (
-                        <p className="text-red-500 text-xs mt-1">{errors.platform}</p>
-                      )}
-                    </div>
-
-                    {/* Platform Name Field - Show only if Yes is selected */}
-                    {formData.platform === "Yes" && (
-                      <div className="mt-3">
-                        <input
-                          type="text"
-                          name="platformName"
-                          value={formData.platformName || ""}
-                          onChange={handleInputChange}
-                          placeholder="Which platform do you use?"
-                          disabled={isSubmitting}
-                          className={`w-full border ${
-                            errors.platformName ? "border-red-400" : "border-gray-300"
-                          } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                        />
-                        {errors.platformName && (
-                          <p className="text-red-500 text-xs mt-1">{errors.platformName}</p>
-                        )}
-                      </div>
-                    )}
-
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="w-full bg-[#124aad] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#093e9c] transition duration-300 disabled:opacity-50"
-                    >
-                      {isSubmitting ? "Submitting..." : "Submit"}
-                    </button>
-                  </form>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div id="register" className="min-h-screen bg-[#eceae0] flex flex-col md:flex-row items-center justify-center pl-6 pr-2 md:pl-6 md:pr-2 py-12 gap-10">
-
-      {/* LEFT SECTION (empty placeholder) */}
-      <motion.div
-        initial={{ opacity: 0, y: 60, scale: 0.95 }}
-        whileInView={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-        viewport={{ once: true, amount: 0.3 }}
-        className="md:w-1/2 flex flex-col items-center justify-center text-center space-y-6"
-      />
-
-      {/* RIGHT SECTION */}
-      <div className="md:w-1/2 w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300 relative overflow-hidden">
-        {/* Form Background Image */}
+    <div className="w-full max-w-md mx-auto">
+      {/* Form Background & Fields */}
+      <div className="relative bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 overflow-hidden">
         <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl">
-          <img
-            src={FormBg}
-            alt='Form Background'
-            className='w-full h-full object-cover '
-          />
+          <img src={FormBg} alt='Form Background' className='w-full h-full object-cover opacity-30' />
         </div>
         <div className="relative z-10">
-          <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-black tracking-wide drop-shadow-sm">
-            Register
-          </h2>
+          {!successMessage && <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-black">Register</h2>}
 
-          {submitError && (
-            <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
-          )}
-
-          {otpSentMessage && !successMessage && (
-            <p className="text-green-500 text-sm text-center mb-3">
-              {otpSentMessage}
-            </p>
-          )}
-
+          {submitError && <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>}
+          {otpSentMessage && !successMessage && <p className="text-green-500 text-sm text-center mb-3">{otpSentMessage}</p>}
+          
           {successMessage ? (
-            <p className="text-green-600 text-center font-semibold text-lg">
-              {successMessage}
-            </p>
+            <div className="text-center py-8">
+              <div className="text-green-600 font-semibold text-lg md:text-xl mb-4">
+                {successMessage}
+              </div>
+            </div>
           ) : (
             <>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-                {/* Name Field */}
-                <div>
-                  <input
-                    type="text"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Full Name"
-                    disabled={isSubmitting}
-                    className={`w-full border ${errors.name ? "border-red-400" : "border-gray-300"
-                      } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-                  )}
+              {!showAllFields && (
+            <form onSubmit={handleCheckPhoneAndSendOTP} className="flex flex-col gap-3.5">
+              <input type="text" name="name" placeholder="Enter Your Full Name" value={formData.name} onChange={handleInputChange} disabled={isSubmitting} className="w-full border rounded-md p-2.5" />
+              
+              {/* Phone Number Field  */}
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-500 text-sm font-medium">🇮🇳 +91</span>
                 </div>
+                <input 
+                  type="text" 
+                  name="phone" 
+                  placeholder="Enter Your Contact Number" 
+                  value={formData.phone} 
+                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))} 
+                  disabled={isSubmitting} 
+                  className="w-full border rounded-md p-2.5 pl-16 focus:outline-none focus:ring-2 focus:ring-[#124aad] focus:border-transparent" 
+                />
+              </div>
+              
+              <button type="submit" disabled={isSubmitting} className="w-full bg-[#124aad] text-white py-2.5 rounded-md">{isSubmitting ? "Sending OTP..." : "Send OTP"}</button>
+            </form>
+          )}
 
-                {/* Phone Field with Indian Flag */}
-                <div>
-                  <div className="relative">
-                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center pointer-events-none">
-                      <span className="text-xl">🇮🇳</span>
-                      <span className="ml-1 text-sm text-gray-600">+91</span>
-                    </div>
-                    <input
-                      type="text"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      placeholder="Enter Your Contact Number"
-                      disabled={isSubmitting}
-                      className={`w-full border ${errors.phone ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 md:p-3 pl-20 md:pl-24 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                    />
-                  </div>
-                  {errors.phone && (
-                    <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
-                  )}
-                </div>
+          {showOTPModal && (
+            <form onSubmit={handleOTPSubmit} className="mt-4 flex gap-2">
+              <input type="text" maxLength="6" value={otp} onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} placeholder="Enter OTP" className="flex-1 border rounded-md p-2.5" />
+              <button type="submit" className="bg-[#124aad] text-white py-2.5 px-4 rounded-md">Verify</button>
+            </form>
+          )}
 
-                {/* Send OTP Button */}
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#3b3b27] transition duration-300 disabled:opacity-50"
-                >
-                  {isSubmitting ? "Sending OTP..." : "Send OTP"}
-                </button>
-              </form>
-
-              {/* OTP Verification Section */}
-              {showOTPModal && (
-                <div className="mt-6 bg-white border border-gray-200 p-4 rounded-xl shadow-md">
-                  <h3 className="text-blue-700 font-semibold text-center mb-3 text-sm md:text-base">Enter OTP</h3>
-                  <form onSubmit={handleOTPSubmit} className="flex gap-3 items-start">
-                    <input
-                      type="text"
-                      maxLength="6"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                      placeholder="Enter OTP"
-                      className={`flex-1 border ${otpError ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                    />
-                    <button
-                      type="submit"
-                      className="bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 px-4 rounded-md hover:bg-[#3b3b27] transition duration-300 text-sm whitespace-nowrap"
-                    >
-                      Verify
-                    </button>
-                  </form>
-                  {otpError && (
-                    <p className="text-red-500 text-xs text-center mt-2">{otpError}</p>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setShowOTPModal(false)}
-                    className="text-blue-600 text-xs text-center mt-2 hover:underline block w-full"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              )}
-
-              {/* All Fields Section - Show after OTP verification */}
-              {showAllFields && (
-                <form onSubmit={handleFinalSubmit} className="mt-6 flex flex-col gap-3.5">
-                  {/* Trading Experience Radio Buttons */}
-                  <div className="space-y-2">
-                    <label className="text-md font-large text-gray-700">Trading Experience</label>
-                    <div className="flex flex-col sm:flex-row gap-3 mt-2">
-                      {experiences.map((exp) => (
-                        <label key={exp.value} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="radio"
-                            name="experience"
-                            value={exp.value}
-                            checked={formData.experience === exp.value}
-                            onChange={handleInputChange}
-                            disabled={isSubmitting}
-                            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700">{exp.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                    {errors.experience && (
-                      <p className="text-red-500 text-xs mt-1">{errors.experience}</p>
-                    )}
-                  </div>
-
-                  {/* Interest Checkboxes */}
-                  <div className="space-y-2">
-                    <label className="text-md font-large text-gray-700">What are you interested in?</label>
-                    <div className="flex flex-col sm:flex-row gap-3 mt-2">
-                      {interests.map((int) => (
-                        <label key={int} className="flex items-center space-x-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            name="interest"
-                            value={int}
-                            checked={formData.interest === int}
-                            onChange={handleInputChange}
-                            disabled={isSubmitting}
-                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                          />
-                          <span className="text-sm text-gray-700">{int}</span>
-                        </label>
-                      ))}
-                    </div>
-                    {errors.interest && (
-                      <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
-                    )}
-                  </div>
-
-                  {/* Show trading market field only if user wants to start trading */}
-                  {formData.interest === "I want to start trading" && (
-                    <select
-                      name="market"
-                      value={formData.market}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full border ${errors.market ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                    >
-                      <option value="">Select Market you want to Trade in</option>
-                      {markets.map((mkt) => (
-                        <option key={mkt} value={mkt}>
-                          {mkt}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  {formData.interest === "I want to start trading" && errors.market && (
-                    <p className="text-red-500 text-xs mt-1">{errors.market}</p>
-                  )}
-
-                  {/* Show research market field only if user only wants research alerts */}
-                  {formData.interest === "I only want research alerts" && (
-                    <select
-                      name="researchMarket"
-                      value={formData.researchMarket}
-                      onChange={handleInputChange}
-                      disabled={isSubmitting}
-                      className={`w-full border ${errors.researchMarket ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                    >
-                      <option value="">Select Market you want to Research</option>
-                      {markets.map((mkt) => (
-                        <option key={mkt} value={mkt}>
-                          {mkt}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  {formData.interest === "I only want research alerts" && errors.researchMarket && (
-                    <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
-                  )}
-
-                  <select
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    disabled={isSubmitting}
-                    className={`w-full border ${errors.state ? "border-red-400" : "border-gray-300"
-                      } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                  >
-                    <option value="">Select State</option>
-                    {states.map((st) => (
-                      <option key={st} value={st}>
-                        {st}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.state && (
-                    <p className="text-red-500 text-xs mt-1">{errors.state}</p>
-                  )}
-
-                  {/* Language Dropdown */}
-                  <select
-                    name="language"
-                    value={formData.language}
-                    onChange={handleInputChange}
-                    disabled={isSubmitting}
-                    className={`w-full border ${errors.language ? "border-red-400" : "border-gray-300"
-                      } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                  >
-                    <option value="">Select Language</option>
-                    {languages.map((lang) => (
-                      <option key={lang} value={lang}>
-                        {lang}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.language && (
-                    <p className="text-red-500 text-xs mt-1">{errors.language}</p>
-                  )}
-
-                  {/* Trading Platform Radio Buttons */}
-                  <div className="space-y-2">
-                    <label className="text-md font-large text-gray-700">Do you use any trading platform?</label>
-                    <div className="flex flex-col sm:flex-row gap-4 mt-3">
-                      <label className="flex items-center space-x-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="platform"
-                          value="Yes"
-                          checked={formData.platform === "Yes"}
-                          onChange={handleInputChange}
-                          disabled={isSubmitting}
-                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-gray-700">Yes</span>
-                      </label>
-                      <label className="flex items-center space-x-2 cursor-pointer">
-                        <input
-                          type="radio"
-                          name="platform"
-                          value="No"
-                          checked={formData.platform === "No"}
-                          onChange={handleInputChange}
-                          disabled={isSubmitting}
-                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
-                        />
-                        <span className="text-sm text-gray-700">No</span>
-                      </label>
-                    </div>
-                    {errors.platform && (
-                      <p className="text-red-500 text-xs mt-1">{errors.platform}</p>
-                    )}
-                  </div>
-
-                  {/* Platform Name Field - Show only if Yes is selected */}
-                  {formData.platform === "Yes" && (
-                    <div className="mt-3">
+          {showAllFields && (
+            <form onSubmit={handleFinalSubmit} className="mt-4 flex flex-col gap-3.5">
+              <div className="text-center text-green-600 font-semibold mb-3">
+                 Phone verified successfully! Please complete your registration.
+              </div>
+              
+              {/* Trading Experience - Horizontal Checkboxes */}
+              <div>
+                <label className="block text-md font-medium text-gray-700 mb-4">Select Trading Experience</label>
+                <div className="flex flex-wrap gap-4">
+                  {experiences.map(exp => (
+                    <label key={exp.value} className="flex items-center cursor-pointer">
                       <input
-                        type="text"
-                        name="platformName"
-                        value={formData.platformName || ""}
-                        onChange={handleInputChange}
-                        placeholder="Which platform do you use?"
-                        disabled={isSubmitting}
-                        className={`w-full border ${
-                          errors.platformName ? "border-red-400" : "border-gray-300"
-                        } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                        type="radio"
+                        name="experience"
+                        value={exp.value}
+                        checked={formData.experience === exp.value}
+                        onChange={() => handleCheckboxChange('experience', exp.value)}
+                        className="mr-2"
                       />
-                      {errors.platformName && (
-                        <p className="text-red-500 text-xs mt-1">{errors.platformName}</p>
-                      )}
-                    </div>
-                  )}
+                      <span className="text-sm">{exp.label}</span>
+                    </label>
+                  ))}
+                </div>
+                {errors.experience && <p className="text-red-500 text-sm mt-1">{errors.experience}</p>}
+              </div>
 
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#3b3b27] transition duration-300 disabled:opacity-50"
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit"}
-                  </button>
-                </form>
+              {/* Interest - Horizontal Checkboxes */}
+              <div>
+                <label className="block text-md font-medium text-gray-700 mb-4">What's your interest?</label>
+                <div className="flex flex-wrap gap-4">
+                  {interests.map(interest => (
+                    <label key={interest} className="flex items-center cursor-pointer">
+                      <input
+                        type="radio"
+                        name="interest"
+                        value={interest}
+                        checked={formData.interest === interest}
+                        onChange={() => handleCheckboxChange('interest', interest)}
+                        className="mr-2"
+                      />
+                      <span className="text-sm">{interest}</span>
+                    </label>
+                  ))}
+                </div>
+                {errors.interest && <p className="text-red-500 text-sm mt-1">{errors.interest}</p>}
+              </div>
+
+              {/* Conditional Market Fields */}
+              {formData.interest === "Trade" && (
+                <select name="market" value={formData.market} onChange={handleInputChange} className="w-full border rounded-md p-2.5">
+                  <option value="">Select the market you want to trade in (Optional)</option>
+                  {markets.map(market => (
+                    <option key={market} value={market}>{market}</option>
+                  ))}
+                </select>
               )}
+
+              {formData.interest === "Research" && (
+                <select name="researchMarket" value={formData.researchMarket} onChange={handleInputChange} className="w-full border rounded-md p-2.5">
+                  <option value="">Select the market you want to Research (Optional)</option>
+                  {markets.map(market => (
+                    <option key={market} value={market}>{market}</option>
+                  ))}
+                </select>
+              )}
+
+              {/* Trading Platform Usage - Radio Buttons */}
+              <div>
+                <label className="block text-md font-medium text-gray-700 mb-4">Do you use any trading platform?</label>
+                <div className="flex gap-4">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="usesPlatform"
+                      value="Yes"
+                      checked={formData.usesPlatform === "Yes"}
+                      onChange={() => handleCheckboxChange('usesPlatform', 'Yes')}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">Yes</span>
+                  </label>
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="radio"
+                      name="usesPlatform"
+                      value="No"
+                      checked={formData.usesPlatform === "No"}
+                      onChange={() => handleCheckboxChange('usesPlatform', 'No')}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">No</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Conditional Platform Selection */}
+              {formData.usesPlatform === "Yes" && (
+                <select name="platform" value={formData.platform} onChange={handleInputChange} className="w-full border rounded-md p-2.5">
+                  <option value="">Which platform you use (Optional)</option>
+                  <option value="Zerodha">Zerodha</option>
+                  <option value="Upstox">Upstox</option>
+                  <option value="Angel One">Angel One</option>
+                  <option value="5Paisa">5Paisa</option>
+                  <option value="Other">Other</option>
+                </select>
+              )}
+
+              {formData.platform === "Other" && (
+                <input 
+                  type="text" 
+                  name="platformName" 
+                  placeholder="Enter Platform Name" 
+                  value={formData.platformName} 
+                  onChange={handleInputChange} 
+                  className="w-full border rounded-md p-2.5" 
+                />
+              )}
+
+              {/* State Field */}
+              <select name="state" value={formData.state} onChange={handleInputChange} className="w-full border rounded-md p-2.5">
+                <option value="">Select State</option>
+                {states.map(state => (
+                  <option key={state} value={state}>{state}</option>
+                ))}
+              </select>
+              {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
+
+              {/* Language Field */}
+              <select name="language" value={formData.language} onChange={handleInputChange} className="w-full border rounded-md p-2.5">
+                <option value="">Select Language</option>
+                {languages.map(lang => (
+                  <option key={lang} value={lang}>{lang}</option>
+                ))}
+              </select>
+              {errors.language && <p className="text-red-500 text-sm">{errors.language}</p>}
+
+              <button type="submit" disabled={isSubmitting} className="w-full bg-[#124aad] text-white py-2.5 rounded-md">
+                {isSubmitting ? "Submitting..." : "Complete Registration"}
+              </button>
+            </form>
+          )}
             </>
           )}
         </div>
