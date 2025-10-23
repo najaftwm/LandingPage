@@ -19,7 +19,7 @@ const HeroSection = () => {
       </div> */}
 
       {/* Hero Image */}
-      <div className="absolute inset-0 w-[100%] h-[750px]">
+      <div className="absolute inset-0 w-[100%] h-[710px]">
         <img
           src={HeroImage}
           alt="Hero Banner"
@@ -49,8 +49,8 @@ const HeroSection = () => {
         </div>
 
         {/* Right Section (Login Form) */}
-        <div id="hero-register" className="w-full mt-8 md:mt-7 md:max-w-xl md:ml-auto">
-          <p className="text-lg md:text-xl font-bold text-white mb-4 text-center md:text-left bg-gradient-to-r from-[#27b018] to-[#27b018] px-4 py-3 rounded-lg shadow-lg">
+        <div id="hero-register" className="w-full mt-8 md:mt-7 md:max-w-2xl md:ml-auto">
+          <p className="text-lg md:text-xl font-bold text-white mb-4 text-center md:text-left bg-gradient-to-r from-[#27b018] to-[#27b018] px-2 py-3 rounded-lg shadow-lg">
              Start your journey today — register for your free Demat account, trading support and stock alerts.
           </p>
           <LoginPage embedded={true} />
