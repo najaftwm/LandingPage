@@ -1,16 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import ManImage from '../assets/man.png';
+import LoginPage from './LoginPage';
 
 const DematAccount = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Optional: lock body scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.classList.add('overflow-hidden');
+    } else {
+      document.body.classList.remove('overflow-hidden');
+    }
+    return () => document.body.classList.remove('overflow-hidden');
+  }, [isModalOpen]);
+
   const bulletPoints = [
     "Quick & Hassle-Free Setup",
     "Beginner-Friendly Guidance", 
     "Real-Time Research Support",
     "Zero Hidden Charges",
-    "Dedicated WhatsApp & Call Assistance"
+    "Dedicated Support"
   ];
+
+  const handleButtonClick = () => {
+    // Download APK file
+    const link = document.createElement('a');
+    link.href = `${import.meta.env.BASE_URL}app-tradenstocko.apk`;
+    link.download = 'app-tradenstocko.apk';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Open modal
+    setIsModalOpen(true);
+  };
 
   return (
     <section className="py-16 bg-white" id="demat-account">
@@ -79,7 +105,6 @@ const DematAccount = () => {
             </motion.div>
 
             {/* CTA Button */}
-            <a href={`${import.meta.env.BASE_URL}app-tradenstocko.apk`} download>
             <motion.button
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -87,14 +112,59 @@ const DematAccount = () => {
               viewport={{ amount: 0.3 }}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              onClick={handleButtonClick}
               className="bg-[#20B486] hover:bg-[#1a9068] text-white font-bold py-4 px-8 rounded-lg text-lg shadow-lg hover:shadow-xl transition-all duration-300 w-full max-w-sm"
             >
               Open My Free Demat Account
             </motion.button>
-            </a>
           </motion.div>
         </div>
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center px-4"
+          aria-modal="true"
+          role="dialog"
+        >
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => setIsModalOpen(false)}
+          />
+
+          {/* Modal Panel */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.98, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="relative z-10 w-full max-w-xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl"
+          >
+            <div className="relative z-10 bg-white rounded-2xl shadow-2xl overflow-hidden">
+              {/* Header with Close */}
+              <div className="relative px-5 py-4 border-b">
+                <button
+                  aria-label="Close"
+                  onClick={() => setIsModalOpen(false)}
+                  className="absolute top-4 right-4 p-2.5 rounded-full hover:bg-gray-100 text-gray-800"
+                >
+                  {/* X icon */}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
+
+              {/* Body: reuse LoginPage */}
+              <div className="p-4 sm:p-6">
+                <LoginPage embedded={true} />
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </section>
   );
 };

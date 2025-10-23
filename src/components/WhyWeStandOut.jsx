@@ -64,7 +64,7 @@ const FeatureItem = ({ point, idx }) => {
 const WhyWeStandOut = () => {
   // Existing content preserved – only the layout/visuals are changed
   const points = [
-    { text: 'Research + Trading + Account in one platform', img: ICONS.layers, alt: 'Platform icon' },
+    { text: 'Research + Trading Account in one platform', img: ICONS.layers, alt: 'Platform icon' },
     { text: 'Beginner to Expert Guidance', img: ICONS.graduationCap, alt: 'Education icon' },
     { text: 'Real People. Real Support.', img: ICONS.users, alt: 'Support icon' },
     { text: 'Actionable Research Alerts – Clear buy/sell/hold signals', img: ICONS.signal, alt: 'Signal icon' },

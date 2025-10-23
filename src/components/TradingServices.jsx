@@ -146,26 +146,13 @@ const TradingServices = () => {
             transition={{ duration: 0.2, ease: 'easeOut' }}
             className="relative z-10 w-full max-w-xl sm:max-w-2xl md:max-w-2xl lg:max-w-2xl"
           >
-            {/* Floating Close (always visible) */}
-            <button
-              aria-label="Close"
-              onClick={() => setIsModalOpen(false)}
-              className="fixed top-4 right-4 z-50 p-3 bg-white rounded-full shadow-lg border hover:bg-gray-50 text-gray-900"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
             <div className="relative z-10 bg-white rounded-2xl shadow-2xl overflow-hidden">
               {/* Header with Close */}
-              <div className="flex items-center justify-between px-5 py-4 border-b">
-                <h3 className="text-lg font-semibold text-gray-900">Get Started</h3>
+              <div className="relative px-5 py-4 border-b">
                 <button
                   aria-label="Close"
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2.5 rounded-full hover:bg-gray-100 text-gray-800"
+                  className="absolute top-4 right-4 p-2.5 rounded-full hover:bg-gray-100 text-gray-800"
                 >
                   {/* X icon */}
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

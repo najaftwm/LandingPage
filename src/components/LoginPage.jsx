@@ -14,6 +14,7 @@ const LoginPage = ({ embedded = false }) => {
     market: "",
     researchMarket: "",
     platform: "",
+    platformName: "",
     interest: "",
   });
   const [errors, setErrors] = useState({});
@@ -25,6 +26,8 @@ const LoginPage = ({ embedded = false }) => {
   const [submitError, setSubmitError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [otpSentMessage, setOtpSentMessage] = useState("");
+  const [isOTPVerified, setIsOTPVerified] = useState(false);
+  const [showAllFields, setShowAllFields] = useState(false);
 
   const AUTH_TOKEN =
     "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJDLTc2OTU0MUI3QjY3QzQ5MSIsImlhdCI6MTc1OTcyNDI0NywiZXhwIjoxOTE3NDA0MjQ3fQ.PuwWxKPkSqhjFXSKPQmXX7kU40BPCXQLqM6PLWNP_p-iq6PdYSEJn--uOyB4vdY2Dr89NrtuMcU-WsI5ih5NoA";
@@ -46,10 +49,9 @@ const LoginPage = ({ embedded = false }) => {
   ];
 
   const experiences = [
-    "I'm a Beginner(0-6 months)",
-    "I have Some Experience (6-12 Months)",
-    "I'm an advanced Trader (2+ Years)",
-    "I'm a professional Trader",
+    { value: "Beginner", label: "Beginner" },
+    { value: "Intermediate", label: "Intermediate" },
+    { value: "Pro Trader", label: "Pro Trader" },
   ];
 
   const markets = [
@@ -107,16 +109,18 @@ const LoginPage = ({ embedded = false }) => {
     if (otpSentMessage) setOtpSentMessage("");
   };
 
-  const validateForm = () => {
+  const validateForm = (isInitial = false) => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
     if (!formData.phone || !phoneRegex.test(formData.phone))
       newErrors.phone = "Valid 10-digit Indian phone number is required";
-    if (!formData.experience.trim()) newErrors.experience = "Trading experience is required";
-    // market and researchMarket are optional
-    if (!formData.state.trim()) newErrors.state = "State is required";
-    if (!formData.language) newErrors.language = "Please select a language";
-    if (!formData.interest.trim()) newErrors.interest = "Please select your interest";
+
+    if (!isInitial) {
+      if (!formData.experience.trim()) newErrors.experience = "Trading experience is required";
+      if (!formData.state.trim()) newErrors.state = "State is required";
+      if (!formData.language) newErrors.language = "Please select a language";
+      if (!formData.interest.trim()) newErrors.interest = "Please select your interest";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -175,24 +179,8 @@ const LoginPage = ({ embedded = false }) => {
         status === "VERIFICATION_COMPLETED"
       ) {
         toast.success("OTP verified successfully!");
-        await axios.post(
-          "https://tnscrm.twmresearchalert.com/gateway/leadReg.php",
-          {
-            name: formData.name,
-            phone: phoneNumber,
-            state: formData.state,
-            language: formData.language,
-            experience: formData.experience,
-            market: formData.market || null,
-            researchMarket: formData.researchMarket || null,
-            platform: formData.platform,
-            interest: formData.interest,
-          }
-        );
-        toast.success("Lead submitted successfully!");
-        setSuccessMessage(
-          "Successfully registered! Our team will reach out to you shortly to help you get started."
-        );
+        setIsOTPVerified(true);
+        setShowAllFields(true);
         setShowOTPModal(false);
         setOtp("");
         setOtpError("");
@@ -209,7 +197,7 @@ const LoginPage = ({ embedded = false }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    if (!validateForm(true)) return; // Only validate name and phone initially
     setIsSubmitting(true);
     await sendOTP(formData.phone);
     setIsSubmitting(false);
@@ -225,15 +213,48 @@ const LoginPage = ({ embedded = false }) => {
     validateOTP(formData.phone, verificationId, otp);
   };
 
+  const handleFinalSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateForm(false)) return; // Validate all fields
+    setIsSubmitting(true);
+
+    try {
+      await axios.post(
+        "https://tnscrm.twmresearchalert.com/gateway/leadReg.php",
+        {
+          name: formData.name,
+          phone: formData.phone,
+          state: formData.state,
+          language: formData.language,
+          experience: formData.experience,
+          market: formData.market || null,
+          researchMarket: formData.researchMarket || null,
+          platform: formData.platform,
+          platformName: formData.platformName || null,
+          interest: formData.interest,
+        }
+      );
+      toast.success("Lead submitted successfully!");
+      setSuccessMessage(
+        "Successfully registered! Our team will reach out to you shortly to help you get started."
+      );
+    } catch (error) {
+      toast.error("Failed to submit form. Please try again.");
+      setSubmitError("Failed to submit form. Please try again.");
+    }
+
+    setIsSubmitting(false);
+  };
+
   if (embedded) {
     return (
       <div className="w-full">
         <div className="w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300 relative overflow-hidden">
           {/* Form Background Image */}
           <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl">
-            <img 
-              src={FormBg} 
-              alt='Form Background' 
+            <img
+              src={FormBg}
+              alt='Form Background'
               className='w-full h-full object-cover opacity-30'
             />
           </div>
@@ -242,226 +263,301 @@ const LoginPage = ({ embedded = false }) => {
               Register
             </h2>
 
-          {submitError && (
-            <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
-          )}
+            {submitError && (
+              <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
+            )}
 
-          {otpSentMessage && !successMessage && (
-            <p className="text-green-500 text-sm text-center mb-3">{otpSentMessage}</p>
-          )}
+            {otpSentMessage && !successMessage && (
+              <p className="text-green-500 text-sm text-center mb-3">{otpSentMessage}</p>
+            )}
 
-          {successMessage ? (
-            <p className="text-green-600 text-center font-semibold text-lg">{successMessage}</p>
-          ) : (
-            <>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-              {[
-                { name: "name", placeholder: "Enter Your Full Name" },
-                { name: "phone", placeholder: "Enter Your Contact Number (10 digits)" },
-              ].map((input) => (
-                  <div key={input.name}>
-                    <input
-                      type={input.type || "text"}
-                      name={input.name}
-                      value={formData[input.name]}
-                      onChange={handleInputChange}
-                      placeholder={input.placeholder}
-                      disabled={isSubmitting}
-                      className={`w-full border ${
-                        errors[input.name] ? "border-red-400" : "border-gray-300"
-                      } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                    />
-                    {errors[input.name] && (
-                      <p className="text-red-500 text-xs mt-1">{errors[input.name]}</p>
-                    )}
-                  </div>
-                ))}
-
-                <select
-                  name="experience"
-                  value={formData.experience}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.experience ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">Select Trading Experience</option>
-                  {experiences.map((exp) => (
-                    <option key={exp} value={exp}>
-                      {exp}
-                    </option>
-                  ))}
-                </select>
-                {errors.experience && (
-                  <p className="text-red-500 text-xs mt-1">{errors.experience}</p>
-                )}
-
-                <select
-                  name="interest"
-                  value={formData.interest}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.interest ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">What are you interested in?</option>
-                  {interests.map((int) => (
-                    <option key={int} value={int}>
-                      {int}
-                    </option>
-                  ))}
-                </select>
-                {errors.interest && (
-                  <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
-                )}
-
-                {/* Show trading market field only if user wants to start trading */}
-                {formData.interest === "I want to start trading" && (
-                  <select
-                    name="market"
-                    value={formData.market}
-                    onChange={handleInputChange}
-                    disabled={isSubmitting}
-                    className={`w-full border ${
-                      errors.market ? "border-red-400" : "border-gray-300"
-                    } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                  >
-                    <option value="">Select Market you want to Trade in</option>
-                    {markets.map((mkt) => (
-                      <option key={mkt} value={mkt}>
-                        {mkt}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                {formData.interest === "I want to start trading" && errors.market && (
-                  <p className="text-red-500 text-xs mt-1">{errors.market}</p>
-                )}
-
-                {/* Show research market field only if user only wants research alerts */}
-                {formData.interest === "I only want research alerts" && (
-                  <select
-                    name="researchMarket"
-                    value={formData.researchMarket}
-                    onChange={handleInputChange}
-                    disabled={isSubmitting}
-                    className={`w-full border ${
-                      errors.researchMarket ? "border-red-400" : "border-gray-300"
-                    } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                  >
-                    <option value="">Select Market you want to Research</option>
-                    {markets.map((mkt) => (
-                      <option key={mkt} value={mkt}>
-                        {mkt}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                {formData.interest === "I only want research alerts" && errors.researchMarket && (
-                  <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
-                )}
-
-                <select
-                  name="state"
-                  value={formData.state}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.state ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">Select State</option>
-                  {states.map((st) => (
-                    <option key={st} value={st}>
-                      {st}
-                    </option>
-                  ))}
-                </select>
-                {errors.state && (
-                  <p className="text-red-500 text-xs mt-1">{errors.state}</p>
-                )}
-
-                <select
-                  name="language"
-                  value={formData.language}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.language ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">Select Language</option>
-                  {languages.map((lang) => (
-                    <option key={lang} value={lang}>
-                      {lang}
-                    </option>
-                  ))}
-                </select>
-                {errors.language && (
-                  <p className="text-red-500 text-xs mt-1">{errors.language}</p>
-                )}
-
-                <input
-                  type="text"
-                  name="platform"
-                  value={formData.platform}
-                  onChange={handleInputChange}
-                  placeholder="Do you use any trading platform?"
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.platform ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                />
-                {errors.platform && (
-                  <p className="text-red-500 text-xs mt-1">{errors.platform}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-[#124aad] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#093e9c] transition duration-300 disabled:opacity-50"
-                >
-                  {isSubmitting ? "Sending OTP..." : "Send OTP"}
-                </button>
-              </form>
-
-              {showOTPModal && (
-                <div className="mt-6 bg-white border border-gray-200 p-5 rounded-xl shadow-md">
-                  <h3 className="text-blue-700 font-semibold text-center mb-3">Enter OTP</h3>
-                  <form onSubmit={handleOTPSubmit} className="flex flex-col gap-3">
+            {successMessage ? (
+              <p className="text-green-600 text-center font-semibold text-lg">{successMessage}</p>
+            ) : (
+              <>
+                <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+                  {/* Name Field */}
+                  <div>
                     <input
                       type="text"
-                      maxLength="6"
-                      value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                      placeholder="Enter OTP"
-                      className={`w-full border ${
-                        otpError ? "border-red-400" : "border-gray-300"
-                      } rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                      placeholder="Enter Your Full Name"
+                      disabled={isSubmitting}
+                      className={`w-full border ${errors.name ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
                     />
-                    {otpError && (
-                      <p className="text-red-500 text-xs text-center">{otpError}</p>
+                    {errors.name && (
+                      <p className="text-red-500 text-xs mt-1">{errors.name}</p>
                     )}
-                    <button
-                      type="submit"
-                      className="w-full bg-[#124aad] text-[#eceae0] font-semibold py-2.5 rounded-md hover:bg-[#093e9c] transition duration-300"
-                    >
-                      Verify OTP
-                    </button>
+                  </div>
+
+                  {/* Phone Field with Indian Flag */}
+                  <div>
+                    <div className="relative">
+                      <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center pointer-events-none">
+                        <span className="text-xl">🇮🇳</span>
+                        <span className="ml-1 text-sm text-gray-600">+91</span>
+                      </div>
+                      <input
+                        type="text"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        placeholder="Enter Your Contact Number"
+                        disabled={isSubmitting}
+                        className={`w-full border ${errors.phone ? "border-red-400" : "border-gray-300"
+                          } rounded-md p-2.5 md:p-3 pl-20 md:pl-20 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                      />
+                    </div>
+                    {errors.phone && (
+                      <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                    )}
+                  </div>
+
+                  {/* Send OTP Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#124aad] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#093e9c] transition duration-300 disabled:opacity-50"
+                  >
+                    {isSubmitting ? "Sending OTP..." : "Send OTP"}
+                  </button>
+                </form>
+
+                {/* OTP Verification Section */}
+                {showOTPModal && (
+                  <div className="mt-6 bg-white border border-gray-200 p-4 rounded-xl shadow-md">
+                    <h3 className="text-blue-700 font-semibold text-center mb-3 text-sm md:text-base">Enter OTP</h3>
+                    <form onSubmit={handleOTPSubmit} className="flex gap-3 items-start">
+                      <input
+                        type="text"
+                        maxLength="6"
+                        value={otp}
+                        onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                        placeholder="Enter OTP"
+                        className={`flex-1 border ${otpError ? "border-red-400" : "border-gray-300"
+                          } rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                      />
+                      <button
+                        type="submit"
+                        className="bg-[#124aad] text-[#eceae0] font-semibold py-2.5 px-4 rounded-md hover:bg-[#093e9c] transition duration-300 text-sm whitespace-nowrap"
+                      >
+                        Verify
+                      </button>
+                    </form>
+                    {otpError && (
+                      <p className="text-red-500 text-xs text-center mt-2">{otpError}</p>
+                    )}
                     <button
                       type="button"
                       onClick={() => setShowOTPModal(false)}
-                      className="text-blue-600 text-xs text-center mt-2 hover:underline"
+                      className="text-blue-600 text-xs text-center mt-2 hover:underline block w-full"
                     >
                       Cancel
                     </button>
+                  </div>
+                )}
+
+                {/* All Fields Section - Show after OTP verification */}
+                {showAllFields && (
+                  <form onSubmit={handleFinalSubmit} className="mt-6 flex flex-col gap-3.5">
+                    {/* Trading Experience Radio Buttons */}
+                    <div className="space-y-2">
+                      <label className="text-md font-large text-gray-700">Trading Experience</label>
+                      <div className="flex flex-col sm:flex-row gap-4 mt-3">
+                        {experiences.map((exp) => (
+                          <label key={exp.value} className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="radio"
+                              name="experience"
+                              value={exp.value}
+                              checked={formData.experience === exp.value}
+                              onChange={handleInputChange}
+                              disabled={isSubmitting}
+                              className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                            />
+                            <span className="text-sm text-gray-700">{exp.label}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {errors.experience && (
+                        <p className="text-red-500 text-xs mt-1">{errors.experience}</p>
+                      )}
+                    </div>
+
+                    {/* Interest Checkboxes */}
+                    <div className="space-y-2">
+                      <label className="text-md font-large text-gray-700">What are you interested in?</label>
+                      <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                        {interests.map((int) => (
+                          <label key={int} className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              name="interest"
+                              value={int}
+                              checked={formData.interest === int}
+                              onChange={handleInputChange}
+                              disabled={isSubmitting}
+                              className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                            <span className="text-sm text-gray-700">{int}</span>
+                          </label>
+                        ))}
+                      </div>
+                      {errors.interest && (
+                        <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
+                      )}
+                    </div>
+
+                    {/* Show trading market field only if user wants to start trading */}
+                    {formData.interest === "I want to start trading" && (
+                      <select
+                        name="market"
+                        value={formData.market}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full border ${errors.market ? "border-red-400" : "border-gray-300"
+                          } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                      >
+                        <option value="">Select Market you want to Trade in</option>
+                        {markets.map((mkt) => (
+                          <option key={mkt} value={mkt}>
+                            {mkt}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    {formData.interest === "I want to start trading" && errors.market && (
+                      <p className="text-red-500 text-xs mt-1">{errors.market}</p>
+                    )}
+
+                    {/* Show research market field only if user only wants research alerts */}
+                    {formData.interest === "I only want research alerts" && (
+                      <select
+                        name="researchMarket"
+                        value={formData.researchMarket}
+                        onChange={handleInputChange}
+                        disabled={isSubmitting}
+                        className={`w-full border ${errors.researchMarket ? "border-red-400" : "border-gray-300"
+                          } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                      >
+                        <option value="">Select Market you want to Research</option>
+                        {markets.map((mkt) => (
+                          <option key={mkt} value={mkt}>
+                            {mkt}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    {formData.interest === "I only want research alerts" && errors.researchMarket && (
+                      <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
+                    )}
+
+                    <select
+                      name="state"
+                      value={formData.state}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full border ${errors.state ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                    >
+                      <option value="">Select State</option>
+                      {states.map((st) => (
+                        <option key={st} value={st}>
+                          {st}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.state && (
+                      <p className="text-red-500 text-xs mt-1">{errors.state}</p>
+                    )}
+
+                    <select
+                      name="language"
+                      value={formData.language}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full border ${errors.language ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                    >
+                      <option value="">Select Language</option>
+                      {languages.map((lang) => (
+                        <option key={lang} value={lang}>
+                          {lang}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.language && (
+                      <p className="text-red-500 text-xs mt-1">{errors.language}</p>
+                    )}
+
+                    {/* Trading Platform Radio Buttons */}
+                    <div className="space-y-2">
+                      <label className="text-md font-large text-gray-700">Do you use any trading platform?</label>
+                      <div className="flex flex-col sm:flex-row gap-4 mt-3">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="platform"
+                            value="Yes"
+                            checked={formData.platform === "Yes"}
+                            onChange={handleInputChange}
+                            disabled={isSubmitting}
+                            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">Yes</span>
+                        </label>
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="platform"
+                            value="No"
+                            checked={formData.platform === "No"}
+                            onChange={handleInputChange}
+                            disabled={isSubmitting}
+                            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">No</span>
+                        </label>
+                      </div>
+                      {errors.platform && (
+                        <p className="text-red-500 text-xs mt-1">{errors.platform}</p>
+                      )}
+                    </div>
+
+                    {/* Platform Name Field - Show only if Yes is selected */}
+                    {formData.platform === "Yes" && (
+                      <div className="mt-3">
+                        <input
+                          type="text"
+                          name="platformName"
+                          value={formData.platformName || ""}
+                          onChange={handleInputChange}
+                          placeholder="Which platform do you use?"
+                          disabled={isSubmitting}
+                          className={`w-full border ${
+                            errors.platformName ? "border-red-400" : "border-gray-300"
+                          } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                        />
+                        {errors.platformName && (
+                          <p className="text-red-500 text-xs mt-1">{errors.platformName}</p>
+                        )}
+                      </div>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full bg-[#124aad] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#093e9c] transition duration-300 disabled:opacity-50"
+                    >
+                      {isSubmitting ? "Submitting..." : "Submit"}
+                    </button>
                   </form>
-                </div>
-              )}
-            </>
-          )}
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -470,7 +566,7 @@ const LoginPage = ({ embedded = false }) => {
 
   return (
     <div id="register" className="min-h-screen bg-[#eceae0] flex flex-col md:flex-row items-center justify-center pl-6 pr-2 md:pl-6 md:pr-2 py-12 gap-10">
-      
+
       {/* LEFT SECTION (empty placeholder) */}
       <motion.div
         initial={{ opacity: 0, y: 60, scale: 0.95 }}
@@ -484,9 +580,9 @@ const LoginPage = ({ embedded = false }) => {
       <div className="md:w-1/2 w-full bg-[#f8f8f4] rounded-xl shadow-lg p-6 md:p-7 transition duration-300 relative overflow-hidden">
         {/* Form Background Image */}
         <div className="absolute inset-0 w-full h-full overflow-hidden rounded-xl">
-          <img 
-            src={FormBg} 
-            alt='Form Background' 
+          <img
+            src={FormBg}
+            alt='Form Background'
             className='w-full h-full object-cover '
           />
         </div>
@@ -494,241 +590,307 @@ const LoginPage = ({ embedded = false }) => {
           <h2 className="text-center text-2xl md:text-3xl font-extrabold mb-5 text-black tracking-wide drop-shadow-sm">
             Register
           </h2>
-        
-        {submitError && (
-          <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
-        )}
-        
-        {otpSentMessage && !successMessage && (
-          <p className="text-green-500 text-sm text-center mb-3">
-            {otpSentMessage}
-          </p>
-        )}
-        
-        {successMessage ? (
-          <p className="text-green-600 text-center font-semibold text-lg">
-            {successMessage}
-          </p>
-        ) : (
-          <>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-              {/* Inputs */}
-              {[
-                { name: "name", placeholder: "Full Name" },
-                { name: "phone", placeholder: "Contact (10 digits)" },
-                
-              ].map((input) => (
-                <div key={input.name}>
-                  <input
-                    type={input.type || "text"}
-                    name={input.name}
-                    value={formData[input.name]}
-                    onChange={handleInputChange}
-                    placeholder={input.placeholder}
-                    disabled={isSubmitting}
-                    className={`w-full border ${
-                      errors[input.name] ? "border-red-400" : "border-gray-300"
-                    } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-                  />
-                  {errors[input.name] && (
-                    <p className="text-red-500 text-xs mt-1">{errors[input.name]}</p>
-                  )}
-                </div>
-              ))}
-              
-              {/* Trading Experience Dropdown */}
-              <select
-                name="experience"
-                value={formData.experience}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.experience ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-              >
-                <option value="">Select Trading Experience</option>
-                {experiences.map((exp) => (
-                  <option key={exp} value={exp}>
-                    {exp}
-                  </option>
-                ))}
-              </select>
-              {errors.experience && (
-                <p className="text-red-500 text-xs mt-1">{errors.experience}</p>
-              )}
 
-              {/* Interest Dropdown */}
-              <select
-                name="interest"
-                value={formData.interest}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.interest ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-              >
-                <option value="">What are you interested in?</option>
-                {interests.map((int) => (
-                  <option key={int} value={int}>
-                    {int}
-                  </option>
-                ))}
-              </select>
-              {errors.interest && (
-                <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
-              )}
+          {submitError && (
+            <p className="text-red-500 text-sm text-center mb-3">{submitError}</p>
+          )}
 
-              {/* Show trading market field only if user wants to start trading */}
-              {formData.interest === "I want to start trading" && (
-                <select
-                  name="market"
-                  value={formData.market}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.market ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">Select Market you want to Trade in</option>
-                  {markets.map((mkt) => (
-                    <option key={mkt} value={mkt}>
-                      {mkt}
-                    </option>
-                  ))}
-                </select>
-              )}
-              {formData.interest === "I want to start trading" && errors.market && (
-                <p className="text-red-500 text-xs mt-1">{errors.market}</p>
-              )}
+          {otpSentMessage && !successMessage && (
+            <p className="text-green-500 text-sm text-center mb-3">
+              {otpSentMessage}
+            </p>
+          )}
 
-              {/* Show research market field only if user only wants research alerts */}
-              {formData.interest === "I only want research alerts" && (
-                <select
-                  name="researchMarket"
-                  value={formData.researchMarket}
-                  onChange={handleInputChange}
-                  disabled={isSubmitting}
-                  className={`w-full border ${
-                    errors.researchMarket ? "border-red-400" : "border-gray-300"
-                  } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-                >
-                  <option value="">Select Market you want to Research</option>
-                  {markets.map((mkt) => (
-                    <option key={mkt} value={mkt}>
-                      {mkt}
-                    </option>
-                  ))}
-                </select>
-              )}
-              {formData.interest === "I only want research alerts" && errors.researchMarket && (
-                <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
-              )}
-              
-              <select
-                name="state"
-                value={formData.state}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.state ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-              >
-                <option value="">Select State</option>
-                {states.map((st) => (
-                  <option key={st} value={st}>
-                    {st}
-                  </option>
-                ))}
-              </select>
-              {errors.state && (
-                <p className="text-red-500 text-xs mt-1">{errors.state}</p>
-              )}
-              
-              {/* Language Dropdown */}
-              <select
-                name="language"
-                value={formData.language}
-                onChange={handleInputChange}
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.language ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
-              >
-                <option value="">Select Language</option>
-                {languages.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
-              {errors.language && (
-                <p className="text-red-500 text-xs mt-1">{errors.language}</p>
-              )}
-
-              <input
-                type="text"
-                name="platform"
-                value={formData.platform}
-                onChange={handleInputChange}
-                placeholder="Do you use any trading platform?"
-                disabled={isSubmitting}
-                className={`w-full border ${
-                  errors.platform ? "border-red-400" : "border-gray-300"
-                } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
-              />
-              {errors.platform && (
-                <p className="text-red-500 text-xs mt-1">{errors.platform}</p>
-              )}
-              
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#3b3b27] transition duration-300 disabled:opacity-50"
-              >
-                {isSubmitting ? "Sending OTP..." : "Send OTP"}
-              </button>
-            </form>
-            
-            {/* OTP Modal */}
-            {showOTPModal && (
-              <div className="mt-6 bg-white border border-gray-200 p-5 rounded-xl shadow-md">
-                <h3 className="text-blue-700 font-semibold text-center mb-3">
-                  Enter OTP
-                </h3>
-                <form onSubmit={handleOTPSubmit} className="flex flex-col gap-3">
+          {successMessage ? (
+            <p className="text-green-600 text-center font-semibold text-lg">
+              {successMessage}
+            </p>
+          ) : (
+            <>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+                {/* Name Field */}
+                <div>
                   <input
                     type="text"
-                    maxLength="6"
-                    value={otp}
-                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                    placeholder="Enter OTP"
-                    className={`w-full border ${
-                      otpError ? "border-red-400" : "border-gray-300"
-                    } rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
+                    placeholder="Full Name"
+                    disabled={isSubmitting}
+                    className={`w-full border ${errors.name ? "border-red-400" : "border-gray-300"
+                      } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
                   />
-                  {otpError && (
-                    <p className="text-red-500 text-xs text-center">
-                      {otpError}
-                    </p>
+                  {errors.name && (
+                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
                   )}
-                  <button
-                    type="submit"
-                    className="w-full bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 rounded-md hover:bg-[#3b3b27] transition duration-300"
-                  >
-                    Verify OTP
-                  </button>
+                </div>
+
+                {/* Phone Field with Indian Flag */}
+                <div>
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 transform -translate-y-1/2 flex items-center pointer-events-none">
+                      <span className="text-xl">🇮🇳</span>
+                      <span className="ml-1 text-sm text-gray-600">+91</span>
+                    </div>
+                    <input
+                      type="text"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      placeholder="Enter Your Contact Number"
+                      disabled={isSubmitting}
+                      className={`w-full border ${errors.phone ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 md:p-3 pl-20 md:pl-24 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                    />
+                  </div>
+                  {errors.phone && (
+                    <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                  )}
+                </div>
+
+                {/* Send OTP Button */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#3b3b27] transition duration-300 disabled:opacity-50"
+                >
+                  {isSubmitting ? "Sending OTP..." : "Send OTP"}
+                </button>
+              </form>
+
+              {/* OTP Verification Section */}
+              {showOTPModal && (
+                <div className="mt-6 bg-white border border-gray-200 p-4 rounded-xl shadow-md">
+                  <h3 className="text-blue-700 font-semibold text-center mb-3 text-sm md:text-base">Enter OTP</h3>
+                  <form onSubmit={handleOTPSubmit} className="flex gap-3 items-start">
+                    <input
+                      type="text"
+                      maxLength="6"
+                      value={otp}
+                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
+                      placeholder="Enter OTP"
+                      className={`flex-1 border ${otpError ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                    />
+                    <button
+                      type="submit"
+                      className="bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 px-4 rounded-md hover:bg-[#3b3b27] transition duration-300 text-sm whitespace-nowrap"
+                    >
+                      Verify
+                    </button>
+                  </form>
+                  {otpError && (
+                    <p className="text-red-500 text-xs text-center mt-2">{otpError}</p>
+                  )}
                   <button
                     type="button"
                     onClick={() => setShowOTPModal(false)}
-                    className="text-blue-600 text-xs text-center mt-2 hover:underline"
+                    className="text-blue-600 text-xs text-center mt-2 hover:underline block w-full"
                   >
                     Cancel
                   </button>
+                </div>
+              )}
+
+              {/* All Fields Section - Show after OTP verification */}
+              {showAllFields && (
+                <form onSubmit={handleFinalSubmit} className="mt-6 flex flex-col gap-3.5">
+                  {/* Trading Experience Radio Buttons */}
+                  <div className="space-y-2">
+                    <label className="text-md font-large text-gray-700">Trading Experience</label>
+                    <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                      {experiences.map((exp) => (
+                        <label key={exp.value} className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="experience"
+                            value={exp.value}
+                            checked={formData.experience === exp.value}
+                            onChange={handleInputChange}
+                            disabled={isSubmitting}
+                            className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">{exp.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {errors.experience && (
+                      <p className="text-red-500 text-xs mt-1">{errors.experience}</p>
+                    )}
+                  </div>
+
+                  {/* Interest Checkboxes */}
+                  <div className="space-y-2">
+                    <label className="text-md font-large text-gray-700">What are you interested in?</label>
+                    <div className="flex flex-col sm:flex-row gap-3 mt-2">
+                      {interests.map((int) => (
+                        <label key={int} className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            name="interest"
+                            value={int}
+                            checked={formData.interest === int}
+                            onChange={handleInputChange}
+                            disabled={isSubmitting}
+                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700">{int}</span>
+                        </label>
+                      ))}
+                    </div>
+                    {errors.interest && (
+                      <p className="text-red-500 text-xs mt-1">{errors.interest}</p>
+                    )}
+                  </div>
+
+                  {/* Show trading market field only if user wants to start trading */}
+                  {formData.interest === "I want to start trading" && (
+                    <select
+                      name="market"
+                      value={formData.market}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full border ${errors.market ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                    >
+                      <option value="">Select Market you want to Trade in</option>
+                      {markets.map((mkt) => (
+                        <option key={mkt} value={mkt}>
+                          {mkt}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {formData.interest === "I want to start trading" && errors.market && (
+                    <p className="text-red-500 text-xs mt-1">{errors.market}</p>
+                  )}
+
+                  {/* Show research market field only if user only wants research alerts */}
+                  {formData.interest === "I only want research alerts" && (
+                    <select
+                      name="researchMarket"
+                      value={formData.researchMarket}
+                      onChange={handleInputChange}
+                      disabled={isSubmitting}
+                      className={`w-full border ${errors.researchMarket ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                    >
+                      <option value="">Select Market you want to Research</option>
+                      {markets.map((mkt) => (
+                        <option key={mkt} value={mkt}>
+                          {mkt}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  {formData.interest === "I only want research alerts" && errors.researchMarket && (
+                    <p className="text-red-500 text-xs mt-1">{errors.researchMarket}</p>
+                  )}
+
+                  <select
+                    name="state"
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                    className={`w-full border ${errors.state ? "border-red-400" : "border-gray-300"
+                      } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                  >
+                    <option value="">Select State</option>
+                    {states.map((st) => (
+                      <option key={st} value={st}>
+                        {st}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.state && (
+                    <p className="text-red-500 text-xs mt-1">{errors.state}</p>
+                  )}
+
+                  {/* Language Dropdown */}
+                  <select
+                    name="language"
+                    value={formData.language}
+                    onChange={handleInputChange}
+                    disabled={isSubmitting}
+                    className={`w-full border ${errors.language ? "border-red-400" : "border-gray-300"
+                      } rounded-md p-2.5 md:p-3 text-sm text-gray-700 focus:ring-2 focus:ring-blue-400 outline-none`}
+                  >
+                    <option value="">Select Language</option>
+                    {languages.map((lang) => (
+                      <option key={lang} value={lang}>
+                        {lang}
+                      </option>
+                    ))}
+                  </select>
+                  {errors.language && (
+                    <p className="text-red-500 text-xs mt-1">{errors.language}</p>
+                  )}
+
+                  {/* Trading Platform Radio Buttons */}
+                  <div className="space-y-2">
+                    <label className="text-md font-large text-gray-700">Do you use any trading platform?</label>
+                    <div className="flex flex-col sm:flex-row gap-4 mt-3">
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="platform"
+                          value="Yes"
+                          checked={formData.platform === "Yes"}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">Yes</span>
+                      </label>
+                      <label className="flex items-center space-x-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="platform"
+                          value="No"
+                          checked={formData.platform === "No"}
+                          onChange={handleInputChange}
+                          disabled={isSubmitting}
+                          className="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                        />
+                        <span className="text-sm text-gray-700">No</span>
+                      </label>
+                    </div>
+                    {errors.platform && (
+                      <p className="text-red-500 text-xs mt-1">{errors.platform}</p>
+                    )}
+                  </div>
+
+                  {/* Platform Name Field - Show only if Yes is selected */}
+                  {formData.platform === "Yes" && (
+                    <div className="mt-3">
+                      <input
+                        type="text"
+                        name="platformName"
+                        value={formData.platformName || ""}
+                        onChange={handleInputChange}
+                        placeholder="Which platform do you use?"
+                        disabled={isSubmitting}
+                        className={`w-full border ${
+                          errors.platformName ? "border-red-400" : "border-gray-300"
+                        } rounded-md p-2.5 md:p-3 text-sm focus:ring-2 focus:ring-blue-400 outline-none`}
+                      />
+                      {errors.platformName && (
+                        <p className="text-red-500 text-xs mt-1">{errors.platformName}</p>
+                      )}
+                    </div>
+                  )}
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#4a4a2e] text-[#eceae0] font-semibold py-2.5 md:py-3 rounded-md hover:bg-[#3b3b27] transition duration-300 disabled:opacity-50"
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </button>
                 </form>
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </>
+          )}
         </div>
       </div>
     </div>
